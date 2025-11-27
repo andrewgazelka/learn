@@ -17,6 +17,9 @@ export interface Lesson {
 	prerequisites?: string[];
 }
 
+export type ModuleType = 'standard' | 'deep-dive';
+export type ModuleVariant = 'analysis' | 'simulator';
+
 export interface Module {
 	id: string;
 	slug: string;
@@ -26,6 +29,9 @@ export interface Module {
 	lessons: Lesson[];
 	prerequisites?: string[];
 	order: number;
+	type?: ModuleType;
+	/** For deep-dives: 'analysis' studies the figure, 'simulator' role-plays as them */
+	variant?: ModuleVariant;
 }
 
 export interface Course {
@@ -41,6 +47,12 @@ export interface Course {
 	tags: string[];
 	/** Required SVG illustration component for the course */
 	illustration: Component;
+	/** Course IDs that should be completed first (soft prerequisite) */
+	prerequisites?: string[];
+	/** True if this is a "goal" course users can select as a destination */
+	isGoal?: boolean;
+	/** Category for grouping goals: "fitness", "creative", "thinking", "social" */
+	goalCategory?: string;
 }
 
 export interface LessonProgress {

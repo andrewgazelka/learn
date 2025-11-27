@@ -6,6 +6,8 @@ export const reinforcementLearningCourse: Course = {
 	slug: 'reinforcement-learning',
 	title: 'Reinforcement Learning',
 	description: 'How agents learn from interaction',
+	isGoal: true,
+	goalCategory: 'technical',
 	longDescription:
 		'Explore the foundations of reinforcement learning—from the basic framework of agents and environments through value functions and Q-learning. Build intuition through interactive simulations and discover how machines learn to make decisions.',
 	difficulty: 'intermediate',

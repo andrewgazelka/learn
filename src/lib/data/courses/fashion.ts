@@ -2,10 +2,12 @@ import type { Course } from '$lib/types/courses';
 import FashionIllustration from '$lib/components/illustrations/FashionIllustration.svelte';
 
 export const fashionCourse: Course = {
-	id: 'fashion-fundamentals',
-	slug: 'fashion',
-	title: 'Fashion Fundamentals',
+	id: 'visual-style',
+	slug: 'visual-style',
+	title: 'Visual Style',
 	description: 'Develop your personal style through understanding',
+	isGoal: true,
+	goalCategory: 'creative',
 	longDescription:
 		'Move beyond "I don\'t know what looks good" to understanding why certain combinations work. Through interactive styling games, discover the principles of color theory, proportion, and silhouette that underpin all great outfits—then build a wardrobe that actually works for you.',
 	difficulty: 'beginner',

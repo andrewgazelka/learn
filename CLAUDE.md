@@ -2,6 +2,10 @@ Important to make look good on desktop AND mobile
 
 use hiearchical folder structure/etc
 
+## Layout Convention
+
+**DO NOT import Navbar in page components.** The root layout (`src/routes/+layout.svelte`) already includes the Navbar globally (except for dashboard routes which have their own layout). Adding `<Navbar />` to individual pages causes duplicate navbars.
+
 You are able to use the Svelte MCP server, where you have access to comprehensive Svelte 5 and SvelteKit documentation. Here's how to use the available tools effectively:
 
 ## Available MCP Tools:
@@ -71,6 +75,15 @@ See `src/lib/keybinds.svelte.ts` for the registry.
 4. Never require mouse clicks for progression
 
 When adding features, always add corresponding keybinds. Use `getModifierKey()` to show platform-appropriate keys (⌘ on Mac, Ctrl on Windows).
+
+## AI Terminology
+
+**Don't explicitly mention "AI" in course content.** The entire platform is AI-powered with simulated agents, debates, and interactive scenarios. This is implicit and doesn't need to be repeated.
+
+- Bad: "Debate against AI opponents", "AI agents attack your argument"
+- Good: "Debate opponents who fight back", "Your argument gets attacked"
+
+The simulation-based, active learning approach is the platform's core identity—no need to label it.
 
 ## Interactive Lesson Design (Nicky Case style)
 

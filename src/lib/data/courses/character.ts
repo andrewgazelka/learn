@@ -2,10 +2,12 @@ import type { Course } from '$lib/types/courses';
 import CharacterIllustration from '$lib/components/illustrations/CharacterIllustration.svelte';
 
 export const characterCourse: Course = {
-	id: 'character-fundamentals',
-	slug: 'character',
-	title: 'Character & Integrity',
-	description: 'Become someone others trust and respect',
+	id: 'earned-respect',
+	slug: 'earned-respect',
+	title: 'Earned Respect',
+	description: 'Build trust, navigate conflict, and lead without authority',
+	isGoal: true,
+	goalCategory: 'social',
 	longDescription:
 		'Earning respect isn\'t about tricks—it\'s about consistent character. Through AI-powered social simulations, navigate difficult conversations, handle betrayals wisely, and practice the principles that make people naturally trust and follow you. Role-play scenarios where your choices shape how AI characters perceive and treat you.',
 	difficulty: 'intermediate',

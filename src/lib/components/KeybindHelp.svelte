@@ -13,7 +13,9 @@
 			items: [
 				{ keys: 'G', description: 'Go to home' },
 				{ keys: 'D', description: 'Go to dashboard' },
-				{ keys: 'C', description: 'Go to courses' }
+				{ keys: 'C', description: 'Go to courses' },
+				{ keys: 'U', description: 'Go to your profile' },
+				{ keys: 'F', description: 'Find users' }
 			]
 		},
 		{

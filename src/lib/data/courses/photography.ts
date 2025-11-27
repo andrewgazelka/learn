@@ -2,10 +2,12 @@ import type { Course } from '$lib/types/courses';
 import PhotographyIllustration from '$lib/components/illustrations/PhotographyIllustration.svelte';
 
 export const photographyCourse: Course = {
-	id: 'photography-fundamentals',
-	slug: 'photography',
-	title: 'Photography Fundamentals',
-	description: 'See light, capture moments',
+	id: 'seeing-light',
+	slug: 'seeing-light',
+	title: 'Seeing Light',
+	description: 'Master exposure, composition, and visual storytelling',
+	isGoal: true,
+	goalCategory: 'creative',
 	longDescription:
 		'Stop shooting on auto and start making intentional images. Through interactive simulations, master the exposure triangle, understand how light shapes your subjects, and develop the compositional eye that separates snapshots from photographs.',
 	difficulty: 'beginner',

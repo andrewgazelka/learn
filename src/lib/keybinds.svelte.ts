@@ -6,6 +6,9 @@ export type KeybindAction =
 	| 'home'
 	| 'dashboard'
 	| 'courses'
+	| 'graph'
+	| 'profile'
+	| 'userSearch'
 	| 'escape'
 	| 'resume'
 	| 'nextLesson'
@@ -26,6 +29,9 @@ export const keybinds: Keybind[] = [
 	{ key: 'g', action: 'home', description: 'Go home' },
 	{ key: 'd', action: 'dashboard', description: 'Go to dashboard' },
 	{ key: 'c', action: 'courses', description: 'Go to courses' },
+	{ key: 'm', action: 'graph', description: 'Course map' },
+	{ key: 'u', action: 'profile', description: 'Go to your profile' },
+	{ key: 'f', action: 'userSearch', description: 'Find users' },
 	{ key: 'r', action: 'resume', description: 'Resume learning' },
 	{ key: 'n', action: 'nextLesson', description: 'Next lesson' },
 	{ key: 'p', action: 'prevLesson', description: 'Previous lesson' },

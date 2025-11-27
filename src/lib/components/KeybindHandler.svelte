@@ -43,6 +43,15 @@
 					case 'courses':
 						void goto(resolve('/courses'));
 						break;
+					case 'graph':
+						void goto(resolve('/graph'));
+						break;
+					case 'profile':
+						void goto(resolve('/profile/andrewgazelka'));
+						break;
+					case 'userSearch':
+						void goto(resolve('/users/search'));
+						break;
 					case 'resume':
 					case 'nextLesson':
 					case 'prevLesson':

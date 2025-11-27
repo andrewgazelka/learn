@@ -61,6 +61,18 @@
 	--color-success-dark: #22c55e;
 	--color-error: #b91c1c;
 	--color-error-dark: #ef4444;
+
+	/* Contribution graph - GitHub-inspired green */
+	--color-contrib-0: oklch(0% 0 0 / 4%);
+	--color-contrib-0-dark: oklch(100% 0 0 / 6%);
+	--color-contrib-1: #9be9a8;
+	--color-contrib-1-dark: #0e4429;
+	--color-contrib-2: #40c463;
+	--color-contrib-2-dark: #006d32;
+	--color-contrib-3: #30a14e;
+	--color-contrib-3-dark: #26a641;
+	--color-contrib-4: #216e39;
+	--color-contrib-4-dark: #39d353;
 }
 
 /* Base styles */
