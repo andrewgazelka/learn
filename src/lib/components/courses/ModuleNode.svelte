@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { Module, ModuleStatus } from '$lib/types/courses';
+	import { hasLessonContent } from '$lib/content/lessons';
 	import ProgressRing from './ProgressRing.svelte';
 	import LockClosed from '~icons/lucide/lock';
 	import IconBookOpen from '~icons/lucide/book-open';
@@ -67,7 +68,12 @@
 	const isLocked = status === 'locked';
 	const isCompleted = status === 'completed';
 	const isDeepDive = module.type === 'deep-dive';
-	const firstLessonId = module.lessons[0]?.id;
+
+	// Link to the first lesson with content, or first lesson if none have content
+	const targetLessonId = $derived(() => {
+		const lessonWithContent = module.lessons.find((l) => hasLessonContent(l.id));
+		return lessonWithContent?.id ?? module.lessons[0]?.id;
+	});
 
 	const iconMap: Record<string, typeof IconBookOpen> = {
 		'newspaper': IconNewspaper,
@@ -193,7 +199,7 @@
 	{:else}
 		<a
 			class="group flex-1 pt-2 pb-8 block"
-			href={resolve(`/courses/${courseSlug}/lessons/${firstLessonId}`)}
+			href={resolve(`/courses/${courseSlug}/lessons/${targetLessonId()}`)}
 		>
 			<h3
 				class="font-serif text-lg text-text-primary dark:text-text-primary-dark group-hover:underline underline-offset-4 transition-colors"
