@@ -21,3 +21,45 @@ You MUST use this tool whenever writing Svelte code before sending it to the use
 
 Generates a Svelte Playground link with the provided code.
 After completing the code, ask the user if they want a playground link. Only call this tool after user confirmation and NEVER if code was written to files in their project.
+
+## Icons
+
+Use unplugin-icons: `import IconName from '~icons/{collection}/{icon}'` (e.g., `~icons/lucide/flame`). Browse at https://icones.js.org
+
+## Keyboard Navigation (Vim/Superhuman inspired)
+
+This app is keyboard-first. All major actions have keybinds. See `src/lib/keybinds.svelte.ts` for the registry.
+
+**Core keybinds:**
+- `⌘K` / `Ctrl+K` - Command palette / search
+- `?` - Show all keyboard shortcuts
+- `G` - Go home, `D` - Dashboard, `C` - Courses
+- `ESC` - Close modals
+
+When adding features, always add corresponding keybinds. Use `getModifierKey()` to show platform-appropriate keys (⌘ on Mac, Ctrl on Windows).
+
+## Gamification Philosophy
+
+This platform uses research-backed gamification to drive genuine learning:
+
+- **XP rewards learning behaviors**: Retrieval practice, identifying edge cases, explaining concepts earn more than passive consumption
+- **Badges celebrate mastery**: "Identify 5 edge cases" over "Complete 100 lessons"
+- **Forgiving streaks**: Auto-freeze, weekend grace, "total days" that never resets
+- **No dark patterns**: No shame, no artificial urgency, no loss-framing
+- **Veritasium-style depth**: Reward understanding edge cases and common misconceptions
+
+### XP Values (for reference)
+| Action | XP | Rationale |
+|--------|-----|-----------|
+| Recall without hints | 25 | Retrieval practice is most effective |
+| Identify edge case | 40 | Deep understanding |
+| Explain concept | 30 | Generation effect |
+| Complete lesson | 10 | Basic completion |
+| Spaced review bonus | 10 | Optimal retention timing |
+
+### Badge Categories
+1. **Depth**: Edge cases, misconceptions, connections
+2. **Retention**: Spaced reviews, long-term recall
+3. **Consistency**: Streaks with forgiveness
+4. **Breadth**: Exploring multiple topics
+5. **Teaching**: Explaining, helping others
