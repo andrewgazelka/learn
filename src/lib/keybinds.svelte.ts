@@ -6,7 +6,10 @@ export type KeybindAction =
 	| 'home'
 	| 'dashboard'
 	| 'courses'
-	| 'escape';
+	| 'escape'
+	| 'resume'
+	| 'nextLesson'
+	| 'prevLesson';
 
 export interface Keybind {
 	key: string;
@@ -23,11 +26,16 @@ export const keybinds: Keybind[] = [
 	{ key: 'g', action: 'home', description: 'Go home' },
 	{ key: 'd', action: 'dashboard', description: 'Go to dashboard' },
 	{ key: 'c', action: 'courses', description: 'Go to courses' },
+	{ key: 'r', action: 'resume', description: 'Resume learning' },
+	{ key: 'n', action: 'nextLesson', description: 'Next lesson' },
+	{ key: 'p', action: 'prevLesson', description: 'Previous lesson' },
 	{ key: 'Escape', action: 'escape', description: 'Close modal / Cancel' }
 ];
 
-// Detect platform
-export const isMac = browser ? navigator.platform.toUpperCase().includes('MAC') : false;
+// Detect platform using userAgent (platform is deprecated)
+export const isMac: boolean = browser
+	? /Mac|iPhone|iPad|iPod/iu.test(navigator.userAgent)
+	: false;
 
 // Get display key for modifier
 export function getModifierKey(): string {
@@ -37,16 +45,16 @@ export function getModifierKey(): string {
 // Format keybind for display
 export function formatKeybind(keybind: Keybind): string {
 	const parts: string[] = [];
-	if (keybind.meta) parts.push(getModifierKey());
-	if (keybind.shift) parts.push('Shift');
+	if (keybind.meta === true) parts.push(getModifierKey());
+	if (keybind.shift === true) parts.push('Shift');
 	parts.push(keybind.key.toUpperCase());
 	return parts.join(isMac ? '' : '+');
 }
 
 // Global keybind state
 class KeybindState {
-	searchOpen = $state(false);
-	helpOpen = $state(false);
+	searchOpen: boolean = $state(false);
+	helpOpen: boolean = $state(false);
 
 	openSearch() {
 		this.searchOpen = true;
@@ -74,8 +82,8 @@ export const keybindState = new KeybindState();
 
 // Check if event matches keybind
 export function matchesKeybind(event: KeyboardEvent, keybind: Keybind): boolean {
-	const metaMatch = keybind.meta ? (isMac ? event.metaKey : event.ctrlKey) : true;
-	const shiftMatch = keybind.shift ? event.shiftKey : !event.shiftKey;
+	const metaMatch = keybind.meta === true ? (isMac ? event.metaKey : event.ctrlKey) : true;
+	const shiftMatch = keybind.shift === true ? event.shiftKey : !event.shiftKey;
 	const keyMatch = event.key.toLowerCase() === keybind.key.toLowerCase();
 
 	return metaMatch && shiftMatch && keyMatch;

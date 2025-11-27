@@ -1,7 +1,7 @@
 <script lang="ts">
-	import ContinueLearningCard from '$lib/components/dashboard/ContinueLearningCard.svelte';
-	import QuietStatRow from '$lib/components/dashboard/QuietStatRow.svelte';
-	import RecentActivityList from '$lib/components/dashboard/RecentActivityList.svelte';
+	import type { Component } from 'svelte';
+	import { resolve } from '$app/paths';
+	import Kbd from '$lib/components/ui/Kbd.svelte';
 	import { courses, mockProgress } from '$lib/data/courses';
 
 	// Get current course progress
@@ -9,69 +9,103 @@
 	const progress = mockProgress.get(currentCourse.id);
 	const currentModule = currentCourse.modules.find((m) => m.id === progress?.currentModuleId);
 	const currentLesson = currentModule?.lessons.find((l) => l.id === progress?.currentLessonId);
+	const Illustration: Component = currentCourse.illustration;
 
-	// Calculate progress percentage
-	const progressPercent = progress
+	const progressPercent = progress !== undefined
 		? Math.round((progress.lessonsCompleted / progress.totalLessons) * 100)
 		: 0;
 
-	// Mock stats
-	const stats = {
-		streak: 34,
-		xp: 1247,
-		topics: 12
-	};
+	const stats = { streak: 34, xp: 1247, topics: 12 };
 
-	// Recent activity
+	function formatXP(value: number): string {
+		return value >= 1000 ? `${(value / 1000).toFixed(1).replace(/\.0$/u, '')}k` : value.toLocaleString();
+	}
+
 	const recentActivity = [
-		{
-			lesson: 'The RL Problem',
-			module: 'What is RL?',
-			href: '/courses/reinforcement-learning/lessons/rl-intro-1'
-		},
-		{
-			lesson: 'RL vs Supervised',
-			module: 'What is RL?',
-			href: '/courses/reinforcement-learning/lessons/rl-intro-2'
-		}
+		{ lesson: 'The RL Problem', module: 'What is RL?' },
+		{ lesson: 'RL vs Supervised', module: 'What is RL?' }
 	];
+
+	const continueHref = `/courses/${currentCourse.slug}/lessons/${currentLesson?.id ?? currentCourse.modules[0].lessons[0].id}`;
 </script>
 
-<div class="max-w-2xl mx-auto px-6 md:px-8 py-16 md:py-24">
-	<!-- Header -->
-	<header class="flex items-baseline justify-between mb-12">
-		<h1 class="text-2xl font-serif text-text-primary dark:text-text-primary-dark">Welcome back</h1>
-		<QuietStatRow streak={stats.streak} xp={stats.xp} topics={stats.topics} />
+<div class="min-h-[85vh] flex flex-col justify-center max-w-4xl mx-auto px-8 md:px-12 py-20">
+	<!-- Hero -->
+	<header>
+		<!-- Stats - whisper quiet -->
+		<div class="text-xs font-sans text-text-muted dark:text-text-muted-dark tracking-wider mb-12">
+			{stats.streak} days &middot; {formatXP(stats.xp)} XP &middot; {stats.topics} topics
+		</div>
+
+		<div class="flex items-end justify-between gap-16">
+			<div class="flex-1 max-w-2xl">
+				<!-- Course label -->
+				<div class="text-xs font-sans text-text-muted dark:text-text-muted-dark uppercase tracking-[0.2em] mb-6">
+					{currentCourse.title}
+				</div>
+
+				<!-- Module title - dominant -->
+				<h1 class="text-5xl sm:text-6xl md:text-7xl font-serif text-text-primary dark:text-text-primary-dark leading-[1.05] tracking-[-0.02em]">
+					{currentModule?.title ?? 'Getting Started'}
+				</h1>
+
+				<!-- Lesson -->
+				<p class="mt-8 text-xl md:text-2xl text-text-secondary dark:text-text-secondary-dark font-serif">
+					{currentLesson?.title ?? 'Begin your journey'}
+				</p>
+
+				<!-- Progress bar - ultra thin -->
+				<div class="mt-10 flex items-center gap-4 max-w-sm">
+					<div class="flex-1 h-px bg-border dark:bg-border-dark">
+						<div
+							style:width="{progressPercent}%"
+							class="h-full bg-text-secondary dark:bg-text-secondary-dark"
+						></div>
+					</div>
+					<span class="text-xs font-sans text-text-muted dark:text-text-muted-dark tabular-nums">
+						{progressPercent}%
+					</span>
+				</div>
+
+				<!-- CTA -->
+				<a
+					class="group inline-flex items-center gap-3 mt-12"
+					href={resolve(continueHref)}
+				>
+					<span class="text-accent dark:text-accent-dark font-sans text-sm tracking-wide uppercase hover:underline underline-offset-4">
+						Continue
+					</span>
+					<Kbd key="R" size="sm" />
+				</a>
+			</div>
+
+			<!-- Illustration - ghostly -->
+			<div class="hidden lg:block w-48 opacity-30">
+				<Illustration class="w-full h-auto" />
+			</div>
+		</div>
 	</header>
 
-	<!-- Continue Learning - the hero -->
-	<section class="mb-16">
-		<ContinueLearningCard
-			courseName={currentCourse.title}
-			moduleName={currentModule?.title ?? 'Getting Started'}
-			lessonName={currentLesson?.title ?? 'Begin your journey'}
-			progress={progressPercent}
-			href="/courses/{currentCourse.slug}/lessons/{currentLesson?.id ?? currentCourse.modules[0].lessons[0].id}"
-		/>
-	</section>
-
-	<!-- Recently -->
-	<section class="mb-16">
-		<h2
-			class="text-sm font-sans text-text-muted dark:text-text-muted-dark uppercase tracking-wide mb-4"
-		>
+	<!-- Recently - pushed down, quiet -->
+	<footer class="mt-auto pt-20">
+		<div class="text-xs font-sans text-text-muted dark:text-text-muted-dark uppercase tracking-[0.2em] mb-4">
 			Recently
-		</h2>
-		<RecentActivityList activities={recentActivity} />
-	</section>
+		</div>
+		<div class="space-y-1.5 text-sm">
+			{#each recentActivity as activity (activity.lesson)}
+				<div class="text-text-muted dark:text-text-muted-dark">
+					<span class="font-serif text-text-secondary dark:text-text-secondary-dark">{activity.lesson}</span>
+					<span class="mx-2 opacity-50">/</span>
+					<span>{activity.module}</span>
+				</div>
+			{/each}
+		</div>
 
-	<!-- Explore -->
-	<footer>
 		<a
-			href="/courses"
-			class="text-text-secondary dark:text-text-secondary-dark hover:text-accent dark:hover:text-accent-dark transition-colors"
+			class="inline-block mt-8 text-xs font-sans text-text-muted dark:text-text-muted-dark uppercase tracking-wider hover:text-text-secondary dark:hover:text-text-secondary-dark"
+			href={resolve('/courses')}
 		>
-			Or explore something new &rarr;
+			All courses &rarr;
 		</a>
 	</footer>
 </div>

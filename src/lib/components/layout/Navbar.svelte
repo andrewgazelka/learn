@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import NavSearch from './NavSearch.svelte';
 	import NavProfile from './NavProfile.svelte';
 	import StreakIndicator from '$lib/components/gamification/StreakIndicator.svelte';
@@ -31,10 +32,9 @@
 	<div class="max-w-6xl mx-auto px-6 md:px-8">
 		<div class="h-14 flex items-center justify-between gap-6">
 			<!-- Left: Logo -->
-			<a class="flex items-center text-text-primary dark:text-text-primary-dark" href="/">
+			<a class="flex items-center text-text-primary dark:text-text-primary-dark" aria-label="Learn Anything" href={resolve('/')}>
 				<svg
 					class="w-7 h-7"
-					aria-label="Learn Anything"
 					fill="none"
 					viewBox="0 0 32 32"
 					xmlns="http://www.w3.org/2000/svg"

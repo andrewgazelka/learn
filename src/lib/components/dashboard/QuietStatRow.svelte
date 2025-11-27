@@ -5,11 +5,11 @@
 		topics: number;
 	}
 
-	let { streak, xp, topics }: Props = $props();
+	const { streak, xp, topics }: Props = $props();
 
 	function formatXP(value: number): string {
 		if (value >= 1000) {
-			return `${(value / 1000).toFixed(1).replace(/\.0$/, '')}k`;
+			return `${(value / 1000).toFixed(1).replace(/\.0$/u, '')}k`;
 		}
 		return value.toLocaleString();
 	}

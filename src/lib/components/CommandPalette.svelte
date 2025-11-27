@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import IconSearch from '~icons/lucide/search';
 	import IconHome from '~icons/lucide/home';
 	import IconLayoutDashboard from '~icons/lucide/layout-dashboard';
@@ -9,7 +10,7 @@
 	import { keybindState } from '$lib/keybinds.svelte';
 
 	let query = $state('');
-	let inputEl: HTMLInputElement;
+	let inputEl: HTMLInputElement | undefined;
 
 	const commands = [
 		{ id: 'home', label: 'Go to Home', icon: IconHome, href: '/' },
@@ -18,7 +19,7 @@
 	];
 
 	const filteredCommands = $derived(
-		query
+		query !== ''
 			? commands.filter((c) => c.label.toLowerCase().includes(query.toLowerCase()))
 			: commands
 	);
@@ -30,11 +31,11 @@
 
 	function select(href: string) {
 		close();
-		goto(href);
+		void goto(resolve(href));
 	}
 
 	$effect(() => {
-		if (keybindState.searchOpen && inputEl) {
+		if (keybindState.searchOpen && inputEl !== undefined) {
 			inputEl.focus();
 		}
 	});
@@ -56,7 +57,7 @@
 
 	<!-- Results -->
 	<div class="max-h-80 overflow-y-auto p-2">
-		{#each filteredCommands as command}
+		{#each filteredCommands as command (command.id)}
 			<button
 				class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left text-text-primary dark:text-text-primary-dark hover:bg-surface dark:hover:bg-surface-dark transition-colors"
 				onclick={() => { select(command.href); }}

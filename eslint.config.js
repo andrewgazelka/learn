@@ -151,7 +151,12 @@ export default defineConfig(
 			'svelte/block-lang': 'off', // TypeScript is inferred from tsconfig
 			'svelte/no-inline-styles': 'off', // Sometimes inline styles are needed
 			'svelte/no-restricted-html-elements': 'off', // Project-specific
-			'svelte/require-optimized-style-attribute': 'off' // Not always needed
+			'svelte/require-optimized-style-attribute': 'off', // Not always needed
+			// We use resolve() from $app/paths which handles base paths correctly
+			'svelte/no-navigation-without-base': 'off',
+			'svelte/no-goto-without-base': 'off',
+			// Allow class selectors in <style> - IDs not needed for component-scoped styles
+			'svelte/consistent-selector-style': 'off'
 		}
 	},
 	{

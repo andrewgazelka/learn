@@ -38,13 +38,13 @@
 
 	<!-- Content -->
 	<div class="p-4 space-y-6 max-h-[60vh] overflow-y-auto">
-		{#each groupedKeybinds as group}
+		{#each groupedKeybinds as group (group.title)}
 			<div>
 				<h3 class="text-xs font-sans font-medium text-text-muted dark:text-text-muted-dark uppercase tracking-wider mb-3">
 					{group.title}
 				</h3>
 				<div class="space-y-2">
-					{#each group.items as item}
+					{#each group.items as item (item.keys)}
 						<div class="flex items-center justify-between">
 							<span class="text-sm font-sans text-text-primary dark:text-text-primary-dark">
 								{item.description}

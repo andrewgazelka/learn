@@ -1,3 +1,5 @@
+import type { Component } from 'svelte';
+
 export type LessonStatus = 'locked' | 'available' | 'in_progress' | 'completed';
 export type ModuleStatus = 'locked' | 'available' | 'in_progress' | 'completed';
 export type LessonContentType = 'concept' | 'interactive' | 'practice';
@@ -37,6 +39,8 @@ export interface Course {
 	modules: Module[];
 	totalXP: number;
 	tags: string[];
+	/** Required SVG illustration component for the course */
+	illustration: Component;
 }
 
 export interface LessonProgress {

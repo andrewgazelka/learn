@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
+
 	interface Activity {
 		lesson: string;
 		module: string;
@@ -9,14 +11,14 @@
 		activities: Activity[];
 	}
 
-	let { activities }: Props = $props();
+	const { activities }: Props = $props();
 </script>
 
 <div class="space-y-2">
-	{#each activities as activity}
+	{#each activities as activity (activity.href)}
 		<a
-			href={activity.href}
 			class="block text-text-secondary dark:text-text-secondary-dark hover:text-text-primary dark:hover:text-text-primary-dark transition-colors"
+			href={resolve(activity.href)}
 		>
 			<span class="font-serif">{activity.lesson}</span>
 			<span class="text-text-muted dark:text-text-muted-dark">&middot;</span>

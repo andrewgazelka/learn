@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import Navbar from '$lib/components/layout/Navbar.svelte';
 
 	interface Props {
 		children: Snippet;
@@ -9,7 +8,6 @@
 	const { children }: Props = $props();
 </script>
 
-<Navbar />
-<main>
+<p class="my-6 text-lg font-serif leading-[1.8] text-text-primary dark:text-text-primary-dark">
 	{@render children()}
-</main>
+</p>

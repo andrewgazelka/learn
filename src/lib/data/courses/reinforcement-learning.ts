@@ -1,4 +1,5 @@
 import type { Course } from '$lib/types/courses';
+import RLIllustration from '$lib/components/illustrations/RLIllustration.svelte';
 
 export const reinforcementLearningCourse: Course = {
 	id: 'rl-fundamentals',
@@ -11,6 +12,7 @@ export const reinforcementLearningCourse: Course = {
 	estimatedHours: 12,
 	totalXP: 1200,
 	tags: ['machine-learning', 'ai', 'algorithms'],
+	illustration: RLIllustration,
 	modules: [
 		{
 			id: 'rl-intro',

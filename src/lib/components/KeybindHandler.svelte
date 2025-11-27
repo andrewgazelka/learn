@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { keybindState, keybinds, matchesKeybind } from '$lib/keybinds.svelte';
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -34,13 +35,18 @@
 						keybindState.openHelp();
 						break;
 					case 'home':
-						goto('/');
+						void goto(resolve('/'));
 						break;
 					case 'dashboard':
-						goto('/dashboard');
+						void goto(resolve('/dashboard'));
 						break;
 					case 'courses':
-						goto('/courses');
+						void goto(resolve('/courses'));
+						break;
+					case 'resume':
+					case 'nextLesson':
+					case 'prevLesson':
+						// These are handled by individual pages
 						break;
 				}
 				return;

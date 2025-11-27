@@ -1,33 +1,32 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { resolve } from '$app/paths';
 
 	const topics = ['Anything', 'Rust', 'Design', 'Music', 'Math', 'History'];
-	let currentTopic = $state(topics[0]);
-	let isHovering = $state(false);
-	let cycleInterval: ReturnType<typeof setInterval> | null = null;
+	let topicIndex = $state(0);
 	let mounted = $state(false);
+	let transitioning = $state(false);
 
 	onMount(() => {
 		mounted = true;
+
+		// Start cycling after entrance animation completes
+		const startDelay = setTimeout(() => {
+			const interval = setInterval(() => {
+				transitioning = true;
+				setTimeout(() => {
+					topicIndex = (topicIndex + 1) % topics.length;
+					transitioning = false;
+				}, 150);
+			}, 2500);
+
+			return () => { clearInterval(interval); };
+		}, 600);
+
+		return () => { clearTimeout(startDelay); };
 	});
 
-	function startCycling() {
-		isHovering = true;
-		let index = 0;
-		cycleInterval = setInterval(() => {
-			index = (index + 1) % topics.length;
-			currentTopic = topics[index];
-		}, 150);
-	}
-
-	function stopCycling() {
-		isHovering = false;
-		if (cycleInterval) {
-			clearInterval(cycleInterval);
-			cycleInterval = null;
-		}
-		currentTopic = topics[0];
-	}
+	const currentTopic = $derived(topics[topicIndex]);
 </script>
 
 <section class="min-h-[80vh] flex flex-col justify-center px-8 md:px-16 lg:px-24">
@@ -38,17 +37,14 @@
 			<span style:--delay="0" class="inline-block animate-word" class:visible={mounted}>
 				Learn
 			</span>
-			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<span
 				style:--delay="1"
-				class="inline-block animate-word cursor-default"
+				class="inline-block animate-word"
 				class:visible={mounted}
-				onmouseenter={startCycling}
-				onmouseleave={stopCycling}
-				>
+			>
 				<span
-					class="inline-block min-w-[3ch] transition-transform duration-100"
-					class:scale-105={isHovering}
+					class="inline-block topic-text border-b-2 border-accent/30 dark:border-accent-dark/30"
+					class:transitioning
 				>
 					{currentTopic}
 				</span>
@@ -64,7 +60,7 @@
 		<div style:--delay="3" class="mt-12 animate-word" class:visible={mounted}>
 			<a
 				class="inline-block text-lg text-text-primary dark:text-text-primary-dark border-b-2 border-text-primary dark:border-text-primary-dark pb-1 hover:text-accent hover:border-accent dark:hover:text-accent-dark dark:hover:border-accent-dark transition-colors"
-				href="/dashboard"
+				href={resolve('/dashboard')}
 			>
 				Begin learning
 			</a>
@@ -93,8 +89,17 @@
 		transform: translateY(0);
 	}
 
+	.topic-text {
+		transition: opacity 150ms ease;
+	}
+
+	.topic-text.transitioning {
+		opacity: 0;
+	}
+
 	@media (prefers-reduced-motion: reduce) {
-		.animate-word {
+		.animate-word,
+		.topic-text {
 			opacity: 1;
 			transform: none;
 			transition: none;

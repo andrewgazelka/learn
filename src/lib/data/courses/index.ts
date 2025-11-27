@@ -12,7 +12,7 @@ export function getCourseById(id: string): Course | undefined {
 }
 
 // Mock progress data for development
-export const mockProgress: Map<string, CourseProgress> = new Map([
+export const mockProgress = new Map<string, CourseProgress>([
 	[
 		'rl-fundamentals',
 		{
