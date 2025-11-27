@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { untrack } from 'svelte';
+	import { untrack, type Component } from 'svelte';
 
 	interface State {
 		id: string;
 		label: string;
+		icon?: Component;
 		x: number;
 		y: number;
 	}
@@ -131,6 +132,10 @@
 				{@const isSelf = t.from === t.to}
 				{@const path = getArrowPath(t.from, t.to, isSelf)}
 				{@const isActive = t.from === currentState}
+				{@const fromPos = getStatePos(t.from)}
+				{@const toPos = getStatePos(t.to)}
+				{@const labelX = isSelf ? fromPos.x : (fromPos.x + toPos.x) / 2}
+				{@const labelY = isSelf ? fromPos.y - 50 : (fromPos.y + toPos.y) / 2 - 10}
 				<g class="transition-opacity duration-200" opacity={isActive ? 1 : 0.3}>
 					<path
 						class="stroke-text-muted dark:stroke-text-muted-dark"
@@ -140,10 +145,6 @@
 						stroke-width={isActive ? 1.5 : 1}
 					/>
 					<!-- Probability label -->
-					{@const fromPos = getStatePos(t.from)}
-					{@const toPos = getStatePos(t.to)}
-					{@const labelX = isSelf ? fromPos.x : (fromPos.x + toPos.x) / 2}
-					{@const labelY = isSelf ? fromPos.y - 50 : (fromPos.y + toPos.y) / 2 - 10}
 					<text
 						class="fill-text-muted dark:fill-text-muted-dark text-xs font-sans"
 						text-anchor="middle"
@@ -161,24 +162,35 @@
 				<g
 					class="cursor-pointer transition-transform duration-200"
 					onclick={() => { currentState = state.id; history = [...history.slice(-9), state.id]; }}
+					onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { currentState = state.id; history = [...history.slice(-9), state.id]; } }}
+					role="button"
+					tabindex="0"
 					transform="translate({state.x}, {state.y})"
 				>
 					<circle
 						class="transition-all duration-200 {isActive
-							? 'fill-accent dark:fill-accent-dark stroke-accent dark:stroke-accent-dark'
-							: 'fill-surface-elevated dark:fill-surface-elevated-dark stroke-text-muted dark:stroke-text-muted-dark'}"
+							? 'fill-text-primary dark:fill-text-primary-dark stroke-text-primary dark:stroke-text-primary-dark'
+							: 'fill-surface-elevated dark:fill-surface-elevated-dark stroke-border dark:stroke-border-dark'}"
 						r="28"
 						stroke-width="2"
 					/>
-					<text
-						class="text-sm font-sans pointer-events-none {isActive
-							? 'fill-white'
-							: 'fill-text-primary dark:fill-text-primary-dark'}"
-						dy="0.35em"
-						text-anchor="middle"
-					>
-						{state.label}
-					</text>
+					{#if state.icon}
+						<foreignObject x="-14" y="-14" width="28" height="28" class="pointer-events-none">
+							<div class="w-full h-full flex items-center justify-center {isActive ? 'text-surface-elevated dark:text-surface-dark' : 'text-text-primary dark:text-text-primary-dark'}">
+								<state.icon class="w-6 h-6" />
+							</div>
+						</foreignObject>
+					{:else}
+						<text
+							class="text-sm font-sans pointer-events-none {isActive
+								? 'fill-surface-elevated dark:fill-surface-dark'
+								: 'fill-text-primary dark:fill-text-primary-dark'}"
+							dy="0.35em"
+							text-anchor="middle"
+						>
+							{state.label}
+						</text>
+					{/if}
 				</g>
 			{/each}
 		</svg>
@@ -187,7 +199,7 @@
 	<!-- Controls -->
 	<div class="flex items-center justify-center gap-4">
 		<button
-			class="px-4 py-2 text-sm font-sans bg-accent dark:bg-accent-dark text-white rounded-lg hover:opacity-90 disabled:opacity-50 transition-opacity"
+			class="px-4 py-2 text-sm font-sans bg-text-primary dark:bg-text-primary-dark text-surface-elevated dark:text-surface-dark rounded-lg hover:bg-text-secondary dark:hover:bg-text-secondary-dark disabled:opacity-50 transition-colors"
 			disabled={isAnimating}
 			onclick={step}
 		>
@@ -201,22 +213,25 @@
 		</button>
 	</div>
 
-	<!-- History -->
-	{#if history.length > 0}
-		<div class="mt-6 text-center">
-			<div class="text-xs font-sans text-text-muted dark:text-text-muted-dark uppercase tracking-widest mb-2">
-				History
-			</div>
-			<div class="flex items-center justify-center gap-1 font-mono text-sm text-text-secondary dark:text-text-secondary-dark">
-				{#each history as h, i}
-					{#if i > 0}
-						<span class="text-text-muted dark:text-text-muted-dark">→</span>
-					{/if}
-					<span class={h === currentState ? 'text-accent dark:text-accent-dark font-medium' : ''}>
-						{states.find((s) => s.id === h)?.label ?? h}
-					</span>
-				{/each}
-			</div>
+	<!-- History (always reserve space to prevent layout shift) -->
+	<div class="mt-6 text-center min-h-[3.5rem]">
+		<div class="text-xs font-sans text-text-muted dark:text-text-muted-dark uppercase tracking-widest mb-2 {history.length === 0 ? 'opacity-0' : ''}">
+			History
 		</div>
-	{/if}
+		<div class="flex items-center justify-center gap-1 font-mono text-sm text-text-secondary dark:text-text-secondary-dark min-h-[1.25rem]">
+			{#each history as h, i}
+				{@const historyState = states.find((s) => s.id === h)}
+				{#if i > 0}
+					<span class="text-text-muted dark:text-text-muted-dark">→</span>
+				{/if}
+				<span class={h === currentState ? 'text-text-primary dark:text-text-primary-dark font-semibold' : ''}>
+					{#if historyState?.icon}
+						<historyState.icon class="w-5 h-5 inline-block" />
+					{:else}
+						{historyState?.label ?? h}
+					{/if}
+				</span>
+			{/each}
+		</div>
+	</div>
 </div>

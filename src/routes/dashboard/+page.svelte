@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Component } from 'svelte';
-	import { resolve } from '$app/paths';
 	import Kbd from '$lib/components/ui/Kbd.svelte';
 	import { courses, mockProgress } from '$lib/data/courses';
 
@@ -70,7 +69,7 @@
 				<!-- CTA -->
 				<a
 					class="group inline-flex items-center gap-3 mt-12"
-					href={resolve(continueHref)}
+					href={continueHref}
 				>
 					<span class="text-accent dark:text-accent-dark font-sans text-sm tracking-wide uppercase hover:underline underline-offset-4">
 						Continue
@@ -103,7 +102,7 @@
 
 		<a
 			class="inline-block mt-8 text-xs font-sans text-text-muted dark:text-text-muted-dark uppercase tracking-wider hover:text-text-secondary dark:hover:text-text-secondary-dark"
-			href={resolve('/courses')}
+			href="/courses"
 		>
 			All courses &rarr;
 		</a>

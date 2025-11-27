@@ -1,10 +1,43 @@
 <script lang="ts">
-	import { Math, Callout, Paragraph, Heading, MarkovChain, Quiz } from '$lib/components/lesson';
+	import {
+		LessonPlayer,
+		Step,
+		ContentStep,
+		QuizStep,
+		InsightStep,
+		InteractiveStep,
+		WeatherGame,
+		StatsReveal,
+		Math,
+		MarkovChain,
+		InteractiveMath,
+		MathLabel,
+		ChessMoveDemo
+	} from '$lib/components/lesson';
+	import IconSun from '~icons/lucide/sun';
+	import IconCloudRain from '~icons/lucide/cloud-rain';
+	import IconCloudSun from '~icons/lucide/cloud-sun';
+	import IconCircleHelp from '~icons/lucide/circle-help';
+	import IconLightbulb from '~icons/lucide/lightbulb';
 
-	// Weather example states
+	// Props from lesson page
+	interface Props {
+		courseSlug?: string;
+	}
+
+	const { courseSlug }: Props = $props();
+
+	// LaTeX with interactive highlighting classes
+	const markovEq = String.raw`P(\htmlClass{math-part mp-next}{S_{t+1}} \mid \htmlClass{math-part mp-history}{S_t, S_{t-1}, \ldots, S_0}) = P(\htmlClass{math-part mp-next}{S_{t+1}} \mid \htmlClass{math-part mp-current}{S_t})`;
+
+	// Game state
+	let statsWithoutHistory = $state<{ correct: number; total: number } | null>(null);
+	let statsWithHistory = $state<{ correct: number; total: number } | null>(null);
+
+	// Markov chain for sandbox
 	const weatherStates = [
-		{ id: 'sunny', label: 'Sunny', x: 100, y: 100 },
-		{ id: 'rainy', label: 'Rainy', x: 300, y: 100 }
+		{ id: 'sunny', label: 'Sun', icon: IconSun, x: 100, y: 100 },
+		{ id: 'rainy', label: 'Rain', icon: IconCloudRain, x: 300, y: 100 }
 	];
 
 	const weatherTransitions = [
@@ -14,159 +47,217 @@
 		{ from: 'rainy', to: 'sunny', probability: 0.4 }
 	];
 
-	// Robot navigation example
-	const robotStates = [
-		{ id: 'A', label: 'A', x: 80, y: 100 },
-		{ id: 'B', label: 'B', x: 200, y: 100 },
-		{ id: 'C', label: 'C', x: 320, y: 100 }
-	];
-
-	const robotTransitions = [
-		{ from: 'A', to: 'A', probability: 0.3 },
-		{ from: 'A', to: 'B', probability: 0.7 },
-		{ from: 'B', to: 'A', probability: 0.2 },
-		{ from: 'B', to: 'B', probability: 0.3 },
-		{ from: 'B', to: 'C', probability: 0.5 },
-		{ from: 'C', to: 'B', probability: 0.4 },
-		{ from: 'C', to: 'C', probability: 0.6 }
-	];
+	// Blocking steps: games (1, 3), quizzes (7, 10)
+	const blockingSteps = [1, 3, 7, 10];
+	const TOTAL_STEPS = 12;
 </script>
 
-<!-- Opening hook: Start with a question -->
-<Paragraph>
-	Imagine you're predicting tomorrow's weather. You know today is sunny.
-	Do you need to know what the weather was <em>last week</em> to make your prediction?
-	Or is knowing <em>today's weather</em> enough?
-</Paragraph>
+<LessonPlayer totalSteps={TOTAL_STEPS} {blockingSteps} {courseSlug}>
+	{#snippet children({ currentStep, canAdvance, advance, unblock })}
 
-<Paragraph>
-	This seemingly simple question leads us to one of the most powerful ideas
-	in probability and reinforcement learning: <strong>the Markov property</strong>.
-</Paragraph>
+		<!-- Step 0: Hook -->
+		<Step visible={currentStep === 0}>
+			<div class="text-center space-y-6">
+				<div class="flex justify-center text-amber-400">
+					<IconCloudSun class="w-16 h-16" />
+				</div>
+				<h1 class="text-3xl md:text-4xl font-serif text-text-primary dark:text-text-primary-dark">
+					You're a Weather Forecaster
+				</h1>
+				<p class="text-lg text-text-secondary dark:text-text-secondary-dark font-serif">
+					Your job: predict tomorrow's weather.
+				</p>
+				<p class="text-text-muted dark:text-text-muted-dark">
+					Let's play a game to see how good you are...
+				</p>
+			</div>
+		</Step>
 
-<Heading>The Core Idea</Heading>
+		<!-- Step 1: Game WITHOUT history -->
+		<Step visible={currentStep === 1}>
+			<div class="space-y-6">
+				<div class="text-center">
+					<h2 class="text-2xl font-serif text-text-primary dark:text-text-primary-dark mb-2">
+						Round 1: Just Today
+					</h2>
+					<p class="text-text-muted dark:text-text-muted-dark text-sm">
+						You can only see today's weather. Predict tomorrow.
+					</p>
+				</div>
 
-<Callout type="definition" title="The Markov Property">
-	A system has the <strong>Markov property</strong> if the future depends only on the present,
-	not on the past. In other words, knowing the current state tells you everything
-	you need to predict what happens next.
-</Callout>
+				<WeatherGame
+					showHistory={false}
+					rounds={8}
+					onComplete={(stats) => {
+						statsWithoutHistory = stats;
+						unblock();
+					}}
+				/>
+			</div>
+		</Step>
 
-<Paragraph>
-	Mathematically, we write this as:
-</Paragraph>
+		<!-- Step 2: Transition -->
+		<Step visible={currentStep === 2}>
+			<div class="text-center space-y-6">
+				<div class="flex justify-center text-text-secondary dark:text-text-secondary-dark">
+					<IconCircleHelp class="w-10 h-10" />
+				</div>
+				<p class="text-xl font-serif text-text-primary dark:text-text-primary-dark">
+					What if you could see the <strong>entire weather history</strong>?
+				</p>
+				<p class="text-text-secondary dark:text-text-secondary-dark">
+					Surely that would help you predict better... right?
+				</p>
+			</div>
+		</Step>
 
-<Math
-	tex="P(S_{t+1} \mid S_t, S_{t-1}, \ldots, S_0) = P(S_{t+1} \mid S_t)"
-	block
-/>
+		<!-- Step 3: Game WITH history -->
+		<Step visible={currentStep === 3}>
+			<div class="space-y-6">
+				<div class="text-center">
+					<h2 class="text-2xl font-serif text-text-primary dark:text-text-primary-dark mb-2">
+						Round 2: Full History
+					</h2>
+					<p class="text-text-muted dark:text-text-muted-dark text-sm">
+						Now you can see the last 5 days. Use the patterns!
+					</p>
+				</div>
 
-<Paragraph>
-	The probability of the next state <Math tex="S_{t+1}" /> given <em>all</em> previous states
-	equals the probability given <em>only</em> the current state <Math tex="S_t" />.
-	The history collapses—it doesn't matter how you got here, only where you are now.
-</Paragraph>
+				<WeatherGame
+					showHistory={true}
+					rounds={8}
+					onComplete={(stats) => {
+						statsWithHistory = stats;
+						unblock();
+					}}
+				/>
+			</div>
+		</Step>
 
-<Heading>A Simple Example: Weather</Heading>
+		<!-- Step 4: The Reveal -->
+		<Step visible={currentStep === 4}>
+			<div class="space-y-6">
+				<div class="text-center">
+					<h2 class="text-2xl font-serif text-text-primary dark:text-text-primary-dark mb-2">
+						Your Results
+					</h2>
+				</div>
 
-<Paragraph>
-	Consider a toy model of weather with two states: Sunny and Rainy.
-	If today is sunny, there's an 80% chance tomorrow will be sunny and a 20% chance it will rain.
-	If today is rainy, there's a 60% chance of rain tomorrow and 40% chance of sun.
-</Paragraph>
+				<StatsReveal
+					withoutHistory={statsWithoutHistory}
+					withHistory={statsWithHistory}
+				/>
+			</div>
+		</Step>
 
-<Paragraph>
-	<strong>Try it:</strong> Click "Step" to simulate the next day's weather,
-	or click a state to jump there directly.
-</Paragraph>
+		<!-- Step 5: The Aha -->
+		<Step visible={currentStep === 5}>
+			<div class="text-center space-y-6">
+				<div class="flex justify-center text-accent dark:text-accent-dark">
+					<IconLightbulb class="w-12 h-12" />
+				</div>
+				<h2 class="text-3xl md:text-4xl font-serif text-text-primary dark:text-text-primary-dark">
+					This is called the<br/><strong class="text-accent dark:text-accent-dark">Markov Property</strong>
+				</h2>
+				<p class="text-lg text-text-secondary dark:text-text-secondary-dark max-w-md mx-auto">
+					The future depends <em>only</em> on the present—not on how you got there.
+				</p>
+			</div>
+		</Step>
 
-<MarkovChain states={weatherStates} transitions={weatherTransitions} />
+		<!-- Step 6: Why -->
+		<Step visible={currentStep === 6}>
+			<ContentStep title="Why didn't history help?">
+				<p>
+					In this weather model, tomorrow's weather depends <strong>only on today</strong>.
+				</p>
+				<p>
+					If it's sunny today, there's an 80% chance of sun tomorrow—whether yesterday was sunny, rainy, or you had 10 sunny days in a row.
+				</p>
+				<p class="text-base text-text-muted dark:text-text-muted-dark">
+					The past is already "baked into" the present. No extra information hides in the history.
+				</p>
+			</ContentStep>
+		</Step>
 
-<Callout type="insight" title="Key Insight">
-	Notice how the transition probabilities depend <em>only</em> on the current state.
-	Whether you've had 5 sunny days or 1, the probability of rain tomorrow is still 20%
-	given that today is sunny. <strong>The past is irrelevant.</strong>
-</Callout>
+		<!-- Step 7: Quick check -->
+		<Step visible={currentStep === 7}>
+			<QuizStep
+				question="After 5 sunny days, what's the probability of rain tomorrow?"
+				options={[
+					{ id: 'a', text: 'Higher than 20% — rain is "due"' },
+					{ id: 'b', text: 'Exactly 20% — only today matters' },
+					{ id: 'c', text: 'Lower than 20% — sunny streak continues' }
+				]}
+				correctId="b"
+				explanation="It's exactly 20%. The 5 previous sunny days don't matter—only that TODAY is sunny. That's the Markov property!"
+				onCorrect={unblock}
+			/>
+		</Step>
 
-<Heading>Why Does This Matter for RL?</Heading>
+		<!-- Step 8: The Math -->
+		<Step visible={currentStep === 8}>
+			<InteractiveMath>
+				<div class="space-y-6">
+					<ContentStep title="The Math">
+						<p>We write this formally as:</p>
+					</ContentStep>
+					<div class="p-6 rounded-xl bg-surface dark:bg-surface-dark text-center">
+						<Math tex={markovEq} block />
+					</div>
+					<p class="text-center text-sm text-text-muted dark:text-text-muted-dark">
+						The probability given <MathLabel part="history">ALL history</MathLabel> = the probability given <MathLabel part="current">JUST the current state</MathLabel>
+					</p>
+					<p class="text-center text-xs text-text-muted dark:text-text-muted-dark opacity-60">
+						(hover over the colored text to highlight)
+					</p>
+				</div>
+			</InteractiveMath>
+		</Step>
 
-<Paragraph>
-	In reinforcement learning, we model environments as <strong>Markov Decision Processes (MDPs)</strong>.
-	The Markov property is what makes these problems tractable. If the future depended on
-	the <em>entire</em> history of states, learning would be impossibly complex.
-</Paragraph>
+		<!-- Step 9: Chess Demo -->
+		<Step visible={currentStep === 9}>
+			<div class="space-y-4">
+				<div class="text-center">
+					<h2 class="text-xl font-serif text-text-primary dark:text-text-primary-dark mb-2">
+						A Tricky Example: Chess
+					</h2>
+					<p class="text-sm text-text-muted dark:text-text-muted-dark">
+						Some moves depend on history you can't see...
+					</p>
+				</div>
+				<ChessMoveDemo />
+			</div>
+		</Step>
 
-<Paragraph>
-	Instead, we can represent everything the agent needs to know in a single state.
-	This is why state design is so important—a good state representation captures
-	all relevant information about the past.
-</Paragraph>
+		<!-- Step 10: Challenge -->
+		<Step visible={currentStep === 10}>
+			<QuizStep
+				question="Chess: If you only see the current board position (no move history), do you have a Markov state?"
+				options={[
+					{ id: 'a', text: 'Yes — the board shows all piece positions' },
+					{ id: 'b', text: 'No — some legal moves depend on past moves' }
+				]}
+				correctId="b"
+				explanation="The board alone isn't enough! Castling (moving king + rook together) is only legal if neither piece has moved before—but you can't tell that from the current position. En passant (capturing a pawn that just moved two squares) is only legal immediately after that move. A true Markov state would need to track: which pieces have moved, and the last move made."
+				onCorrect={unblock}
+			/>
+		</Step>
 
-<Heading level={3}>When Markov Doesn't Hold</Heading>
+		<!-- Step 11: Sandbox -->
+		<Step visible={currentStep === 11}>
+			<InteractiveStep instruction="Click states or Step to simulate. Play freely!">
+				<div class="text-center mb-4">
+					<h2 class="text-2xl font-serif text-text-primary dark:text-text-primary-dark">
+						Explore the System
+					</h2>
+					<p class="text-sm text-text-muted dark:text-text-muted-dark mt-1">
+						This is the actual Markov chain you were playing against
+					</p>
+				</div>
+				<MarkovChain states={weatherStates} transitions={weatherTransitions} />
+			</InteractiveStep>
+		</Step>
 
-<Paragraph>
-	Real-world problems often violate the Markov property. Consider:
-</Paragraph>
-
-<Callout type="example" title="Non-Markov Example">
-	A patient's health tomorrow depends not just on their current symptoms,
-	but on their entire medical history—past surgeries, chronic conditions,
-	and the progression of their illness over time.
-</Callout>
-
-<Paragraph>
-	When this happens, we have options: expand the state to include relevant history
-	(e.g., "patient with 3 days of fever" vs. "patient with 1 day of fever"),
-	or use techniques like recurrent neural networks that can learn from sequences.
-</Paragraph>
-
-<Heading>Interactive: Robot Navigation</Heading>
-
-<Paragraph>
-	Here's another example: a robot moving between locations A, B, and C.
-	The transition probabilities form a Markov chain.
-	Experiment with it to build intuition.
-</Paragraph>
-
-<MarkovChain states={robotStates} transitions={robotTransitions} />
-
-<Paragraph>
-	Notice that from state B, the robot can go anywhere—it has the most "options."
-	From A and C, the transitions are more constrained. These structural differences
-	affect how quickly the system explores different states.
-</Paragraph>
-
-<Heading>Check Your Understanding</Heading>
-
-<Quiz
-	question="In a Markov process, which of the following is true about predicting the next state?"
-	options={[
-		{ id: 'a', text: 'You need to know the entire history of states' },
-		{ id: 'b', text: 'You only need to know the current state' },
-		{ id: 'c', text: 'You need to know at least the last two states' },
-		{ id: 'd', text: 'The next state is always deterministic' }
-	]}
-	correctId="b"
-	explanation="The Markov property states that the future is conditionally independent of the past given the present. Only the current state matters for predicting what comes next."
-/>
-
-<Quiz
-	question="A chess game's state is the current board position. Does chess have the Markov property if we only use the board position as state?"
-	options={[
-		{ id: 'a', text: 'Yes, the board position is all you need' },
-		{ id: 'b', text: 'No, you also need to know whose turn it is' },
-		{ id: 'c', text: 'No, you also need castling rights and en passant information' },
-		{ id: 'd', text: 'No, you need the entire game history' }
-	]}
-	correctId="c"
-	explanation="Chess requires more than just piece positions. Castling rights depend on whether the king/rooks have moved, and en passant depends on the previous move. A proper Markov state must include this information."
-/>
-
-<Heading>Summary</Heading>
-
-<Callout type="insight" title="Key Takeaways">
-	<strong>1.</strong> The Markov property: the future depends only on the present, not the past.<br/>
-	<strong>2.</strong> Mathematically: <Math tex="P(S_{t+1} \mid S_t, \ldots, S_0) = P(S_{t+1} \mid S_t)" /><br/>
-	<strong>3.</strong> This property makes RL tractable—we can work with states, not histories.<br/>
-	<strong>4.</strong> State design matters: a good state captures all relevant information.
-</Callout>
+	{/snippet}
+</LessonPlayer>

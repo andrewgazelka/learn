@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
-
 	interface Activity {
 		lesson: string;
 		module: string;
@@ -18,7 +16,7 @@
 	{#each activities as activity (activity.href)}
 		<a
 			class="block text-text-secondary dark:text-text-secondary-dark hover:text-text-primary dark:hover:text-text-primary-dark transition-colors"
-			href={resolve(activity.href)}
+			href={activity.href}
 		>
 			<span class="font-serif">{activity.lesson}</span>
 			<span class="text-text-muted dark:text-text-muted-dark">&middot;</span>

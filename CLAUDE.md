@@ -1,3 +1,7 @@
+Important to make look good on desktop AND mobile
+
+use hiearchical folder structure/etc
+
 You are able to use the Svelte MCP server, where you have access to comprehensive Svelte 5 and SvelteKit documentation. Here's how to use the available tools effectively:
 
 ## Available MCP Tools:
@@ -24,19 +28,63 @@ After completing the code, ask the user if they want a playground link. Only cal
 
 ## Icons
 
+**NEVER use emojis.** They are tacky and inconsistent across platforms. Always use unplugin-icons instead.
+
 Use unplugin-icons: `import IconName from '~icons/{collection}/{icon}'` (e.g., `~icons/lucide/flame`). Browse at https://icones.js.org
 
 ## Keyboard Navigation (Vim/Superhuman inspired)
 
-This app is keyboard-first. All major actions have keybinds. See `src/lib/keybinds.svelte.ts` for the registry.
+**THIS APP MUST BE 100% KEYBOARD NAVIGABLE.** Users should never need a mouse.
 
-**Core keybinds:**
+See `src/lib/keybinds.svelte.ts` for the registry.
+
+**Global keybinds:**
 - `⌘K` / `Ctrl+K` - Command palette / search
 - `?` - Show all keyboard shortcuts
 - `G` - Go home, `D` - Dashboard, `C` - Courses
-- `ESC` - Close modals
+- `ESC` - Close modals, exit lessons
+
+**Lesson keybinds:**
+- `Enter` / `Space` / `→` - Continue to next step
+- `1`, `2`, `3`... - Select quiz/game options
+- Number keys should ALWAYS work for selections
+
+**Requirements for all interactive components:**
+1. Show keyboard hints visually (e.g., `[1]` next to options)
+2. All buttons must have keyboard equivalents
+3. Focus states must be visible
+4. Never require mouse clicks for progression
 
 When adding features, always add corresponding keybinds. Use `getModifierKey()` to show platform-appropriate keys (⌘ on Mac, Ctrl on Windows).
+
+## Interactive Lesson Design (Nicky Case style)
+
+Lessons should be **discovery-based interactive experiences**, not passive reading. Inspired by https://ncase.me/trust/
+
+**Core Principles:**
+- **Play first, theory later** - Let users discover concepts through simulation before explaining
+- **Show don't tell** - Minimal text, maximum interaction
+- **Consequences matter** - User choices affect outcomes they can see
+- **The "aha moment"** - Design for the moment when the user figures it out themselves
+- **Progressive complexity** - Start dead simple, layer in complexity
+- **Sandbox exploration** - Let users play freely after structured learning
+- **Contrast cases** - Show when rules DON'T apply to deepen understanding
+
+**Lesson Flow Pattern:**
+1. Hook with a game/simulation (no explanation yet)
+2. Let user play and form intuitions
+3. Reveal the pattern through their own data
+4. Name the concept (the "aha")
+5. Formalize with math/definitions
+6. Challenge with edge cases
+7. Sandbox mode for exploration
+
+**Game Mechanics to Use:**
+- Prediction games (bet on outcomes, track accuracy)
+- A/B comparisons (which strategy works better?)
+- Parameter sliders (what happens if I change this?)
+- Score tracking (creates investment)
+- Streaks and combos (reward correct sequences)
 
 ## Gamification Philosophy
 

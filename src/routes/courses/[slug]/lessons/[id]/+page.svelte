@@ -1,10 +1,8 @@
 <script lang="ts">
+	import type { Component } from 'svelte';
 	import { page } from '$app/stores';
-	import { resolve } from '$app/paths';
 	import { getCourseBySlug } from '$lib/data/courses';
-	import Kbd from '$lib/components/ui/Kbd.svelte';
-	import ChevronLeft from '~icons/lucide/chevron-left';
-	import ChevronRight from '~icons/lucide/chevron-right';
+	import { getLessonContent, hasLessonContent } from '$lib/content/lessons';
 
 	const slug = $derived($page.params.slug ?? '');
 	const lessonId = $derived($page.params.id ?? '');
@@ -30,14 +28,13 @@
 
 	const current = $derived(lessonData());
 
-	// Navigation
+	// Navigation for completion
 	const navigation = $derived(() => {
 		if (course === undefined || current === null) return { prev: null, next: null };
 
 		let prev = null;
 		let next = null;
 
-		// Previous lesson
 		if (current.lessonIndex > 0) {
 			prev = current.module.lessons[current.lessonIndex - 1];
 		} else if (current.moduleIndex > 0) {
@@ -45,7 +42,6 @@
 			prev = prevModule.lessons[prevModule.lessons.length - 1];
 		}
 
-		// Next lesson
 		if (current.lessonIndex < current.module.lessons.length - 1) {
 			next = current.module.lessons[current.lessonIndex + 1];
 		} else if (current.moduleIndex < course.modules.length - 1) {
@@ -57,120 +53,66 @@
 	});
 
 	const nav = $derived(navigation());
+
+	// Load lesson content dynamically
+	let LessonContent = $state<Component | null>(null);
+
+	$effect(() => {
+		if (hasLessonContent(lessonId)) {
+			getLessonContent(lessonId).then((content) => {
+				LessonContent = content;
+			});
+		} else {
+			LessonContent = null;
+		}
+	});
+
+	// Pass context to lesson
+	const lessonContext = $derived({
+		course: course!,
+		module: current?.module,
+		lesson: current?.lesson,
+		nav,
+		courseSlug: slug
+	});
 </script>
 
 {#if course !== undefined && current !== null}
-	<div class="max-w-2xl mx-auto px-6 md:px-8 py-16 md:py-24">
-		<!-- Breadcrumb -->
-		<nav class="mb-8">
-			<a
-				class="text-sm font-sans text-text-muted dark:text-text-muted-dark hover:text-text-secondary dark:hover:text-text-secondary-dark transition-colors"
-				href={resolve(`/courses/${course.slug}`)}
-			>
-				&larr; {course.title}
-			</a>
-		</nav>
-
-		<!-- Lesson header -->
-		<header class="mb-12">
-			<div
-				class="text-sm font-sans text-text-muted dark:text-text-muted-dark uppercase tracking-wide"
-			>
-				{current.module.title}
+	{#if LessonContent}
+		<!-- Interactive lessons take over the full page -->
+		<LessonContent {...lessonContext} />
+	{:else}
+		<!-- Placeholder for lessons without content -->
+		<div class="min-h-screen flex items-center justify-center px-6">
+			<div class="text-center max-w-md">
+				<div class="text-6xl mb-6">📚</div>
+				<h1 class="text-2xl font-serif text-text-primary dark:text-text-primary-dark mb-2">
+					{current.lesson.title}
+				</h1>
+				<p class="text-text-secondary dark:text-text-secondary-dark mb-6">
+					{current.lesson.description}
+				</p>
+				<p class="text-sm text-text-muted dark:text-text-muted-dark">
+					Content coming soon
+				</p>
+				<a
+					class="inline-block mt-8 text-accent dark:text-accent-dark hover:underline"
+					href="/courses/{course.slug}"
+				>
+					← Back to course
+				</a>
 			</div>
-			<h1 class="mt-2 text-3xl md:text-4xl font-serif text-text-primary dark:text-text-primary-dark">
-				{current.lesson.title}
-			</h1>
-			<p class="mt-3 text-lg text-text-secondary dark:text-text-secondary-dark">
-				{current.lesson.description}
-			</p>
-
-			<div
-				class="mt-4 flex items-center gap-4 text-sm font-sans text-text-muted dark:text-text-muted-dark"
-			>
-				<span>{current.lesson.estimatedMinutes} min</span>
-				<span>&middot;</span>
-				<span>{current.lesson.xpReward} XP</span>
-			</div>
-		</header>
-
-		<!-- Content placeholder -->
-		<article class="prose prose-lg dark:prose-invert max-w-none mb-16">
-			<p>
-				This is where the lesson content would appear. The content could include explanations,
-				interactive elements, code examples, and quizzes depending on the lesson type.
-			</p>
-
-			{#if current.lesson.contentType === 'concept'}
-				<div
-					class="p-6 bg-surface-elevated dark:bg-surface-elevated-dark rounded-xl border border-border-subtle dark:border-border-subtle-dark"
-				>
-					<p class="text-text-secondary dark:text-text-secondary-dark italic m-0">
-						Concept lesson content would be rendered here with rich text, diagrams, and examples.
-					</p>
-				</div>
-			{:else if current.lesson.contentType === 'interactive'}
-				<div
-					class="p-6 bg-surface-elevated dark:bg-surface-elevated-dark rounded-xl border border-border-subtle dark:border-border-subtle-dark"
-				>
-					<p class="text-text-secondary dark:text-text-secondary-dark italic m-0">
-						Interactive simulation or visualization would be embedded here.
-					</p>
-				</div>
-			{:else if current.lesson.contentType === 'practice'}
-				<div
-					class="p-6 bg-surface-elevated dark:bg-surface-elevated-dark rounded-xl border border-border-subtle dark:border-border-subtle-dark"
-				>
-					<p class="text-text-secondary dark:text-text-secondary-dark italic m-0">
-						Quiz questions and practice exercises would appear here.
-					</p>
-				</div>
-			{/if}
-		</article>
-
-		<!-- Navigation -->
-		<footer
-			class="flex items-center justify-between pt-8 border-t border-border-subtle dark:border-border-subtle-dark"
-		>
-			{#if nav.prev !== null}
-				<a
-					class="group flex items-center gap-2 text-text-secondary dark:text-text-secondary-dark hover:text-text-primary dark:hover:text-text-primary-dark transition-colors"
-					href={resolve(`/courses/${course.slug}/lessons/${nav.prev.id}`)}
-				>
-					<ChevronLeft class="w-4 h-4" />
-					<span class="font-serif">{nav.prev.title}</span>
-					<Kbd key="P" size="sm" />
-				</a>
-			{:else}
-				<div></div>
-			{/if}
-
-			{#if nav.next !== null}
-				<a
-					class="group flex items-center gap-2 text-accent dark:text-accent-dark hover:underline underline-offset-4"
-					href={resolve(`/courses/${course.slug}/lessons/${nav.next.id}`)}
-				>
-					<span class="font-serif">{nav.next.title}</span>
-					<ChevronRight class="w-4 h-4" />
-					<Kbd key="N" size="sm" />
-				</a>
-			{:else}
-				<a
-					class="text-accent dark:text-accent-dark hover:underline underline-offset-4"
-					href={resolve(`/courses/${course.slug}`)}
-				>
-					Complete module &rarr;
-				</a>
-			{/if}
-		</footer>
-	</div>
+		</div>
+	{/if}
 {:else}
-	<div class="max-w-2xl mx-auto px-6 md:px-8 py-16 md:py-24">
-		<h1 class="text-2xl font-serif text-text-primary dark:text-text-primary-dark">
-			Lesson not found
-		</h1>
-		<a class="mt-4 inline-block text-accent dark:text-accent-dark hover:underline" href={resolve('/courses')}>
-			Browse all courses
-		</a>
+	<div class="min-h-screen flex items-center justify-center px-6">
+		<div class="text-center">
+			<h1 class="text-2xl font-serif text-text-primary dark:text-text-primary-dark">
+				Lesson not found
+			</h1>
+			<a class="mt-4 inline-block text-accent dark:text-accent-dark hover:underline" href="/courses">
+				Browse all courses
+			</a>
+		</div>
 	</div>
 {/if}

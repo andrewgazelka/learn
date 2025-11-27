@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Component } from 'svelte';
-	import { resolve } from '$app/paths';
 	import Kbd from '$lib/components/ui/Kbd.svelte';
 
 	interface Props {
@@ -18,7 +17,7 @@
 
 <a
 	class="group block p-8 md:p-10 bg-surface-elevated dark:bg-surface-elevated-dark rounded-xl border border-border-subtle dark:border-border-subtle-dark hover:border-border dark:hover:border-border-dark transition-colors"
-	href={resolve(href)}
+	{href}
 >
 	<div class="flex items-center gap-8">
 		<!-- Content -->

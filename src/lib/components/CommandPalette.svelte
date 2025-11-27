@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { resolve } from '$app/paths';
 	import IconSearch from '~icons/lucide/search';
 	import IconHome from '~icons/lucide/home';
 	import IconLayoutDashboard from '~icons/lucide/layout-dashboard';
@@ -31,7 +30,7 @@
 
 	function select(href: string) {
 		close();
-		void goto(resolve(href));
+		void goto(href);
 	}
 
 	$effect(() => {
