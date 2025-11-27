@@ -82,8 +82,22 @@ export const keybindState = new KeybindState();
 
 // Check if event matches keybind
 export function matchesKeybind(event: KeyboardEvent, keybind: Keybind): boolean {
-	const metaMatch = keybind.meta === true ? (isMac ? event.metaKey : event.ctrlKey) : true;
+	// If keybind requires meta, check meta/ctrl is pressed
+	// If keybind does NOT require meta, ensure meta/ctrl is NOT pressed
+	const metaPressed = isMac ? event.metaKey : event.ctrlKey;
+	const metaMatch = keybind.meta === true ? metaPressed : !metaPressed;
+
+	// Same for shift - if required, must be pressed; if not required, must NOT be pressed
 	const shiftMatch = keybind.shift === true ? event.shiftKey : !event.shiftKey;
+
+	// Also ensure alt/option is not pressed (for shortcuts like Alt+C)
+	if (event.altKey) return false;
+
+	// On Mac, also check Ctrl isn't pressed when we're checking metaKey
+	// On non-Mac, check meta (Windows key) isn't pressed
+	if (isMac && event.ctrlKey) return false;
+	if (!isMac && event.metaKey) return false;
+
 	const keyMatch = event.key.toLowerCase() === keybind.key.toLowerCase();
 
 	return metaMatch && shiftMatch && keyMatch;

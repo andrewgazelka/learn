@@ -153,11 +153,11 @@
 		<!-- Step 5: The Aha -->
 		<Step visible={currentStep === 5}>
 			<div class="text-center space-y-6">
-				<div class="flex justify-center text-accent dark:text-accent-dark">
+				<div class="flex justify-center text-text-primary dark:text-text-primary-dark">
 					<IconLightbulb class="w-12 h-12" />
 				</div>
 				<h2 class="text-3xl md:text-4xl font-serif text-text-primary dark:text-text-primary-dark">
-					This is called the<br/><strong class="text-accent dark:text-accent-dark">Markov Property</strong>
+					This is called the<br/><strong class="underline underline-offset-4">Markov Property</strong>
 				</h2>
 				<p class="text-lg text-text-secondary dark:text-text-secondary-dark max-w-md mx-auto">
 					The future depends <em>only</em> on the present—not on how you got there.

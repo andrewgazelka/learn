@@ -46,6 +46,9 @@
 		function handleKeydown(e: KeyboardEvent) {
 			if (keybindState.searchOpen || keybindState.helpOpen) return;
 
+			// Ignore if any modifier keys are pressed (Cmd, Ctrl, Alt)
+			if (e.metaKey || e.ctrlKey || e.altKey) return;
+
 			// Number keys instantly submit
 			const num = parseInt(e.key, 10);
 			if (num >= 1 && num <= options.length && !submitted) {

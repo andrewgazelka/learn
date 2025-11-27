@@ -3,9 +3,9 @@
 	import { keybindState } from '$lib/keybinds.svelte';
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 	import IconX from '~icons/lucide/x';
-	import IconChevronLeft from '~icons/lucide/chevron-left';
-	import IconChevronRight from '~icons/lucide/chevron-right';
+	import Kbd from '$lib/components/ui/Kbd.svelte';
 
 	interface Props {
 		totalSteps: number;
@@ -121,6 +121,22 @@
 		}
 	}
 
+	function complete() {
+		if (!canAdvance) return;
+		// Mark lesson as completed in localStorage
+		if (browser) {
+			try {
+				localStorage.setItem(`${getLessonKey()}:completed`, 'true');
+			} catch {}
+		}
+		// Navigate back to course
+		if (courseSlug) {
+			goto(`/courses/${courseSlug}`);
+		} else {
+			goto('/courses');
+		}
+	}
+
 	function goBack() {
 		if (currentStep > 0) {
 			currentStep--;
@@ -131,15 +147,29 @@
 		unlockedSteps = new Set([...unlockedSteps, currentStep]);
 	}
 
-	// Keyboard navigation
+	// Keyboard navigation (arrows + vim keys)
 	$effect(() => {
 		function handleKeydown(e: KeyboardEvent) {
 			if (keybindState.searchOpen || keybindState.helpOpen) return;
 			if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
 
-			if ((e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowRight') && canAdvance) {
+			// Ignore if any modifier keys are pressed (Cmd, Ctrl, Alt)
+			// This prevents conflicts with system shortcuts like Cmd+L, Cmd+H
+			if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+			// Forward: Enter, Space, Right Arrow, l (vim)
+			if ((e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowRight' || e.key === 'l') && canAdvance) {
 				e.preventDefault();
-				advance();
+				if (isLastStep) {
+					complete();
+				} else {
+					advance();
+				}
+			}
+			// Back: Left Arrow, h (vim)
+			else if ((e.key === 'ArrowLeft' || e.key === 'h') && currentStep > 0) {
+				e.preventDefault();
+				goBack();
 			}
 		}
 
@@ -168,9 +198,9 @@
 
 		<!-- Progress bar - thin, centered -->
 		<div class="flex-1 max-w-xs mx-4">
-			<div class="h-1 bg-border-subtle dark:bg-border-subtle-dark rounded-full overflow-hidden">
+			<div class="h-0.5 bg-border-subtle dark:bg-border-subtle-dark rounded-full overflow-hidden">
 				<div
-					class="h-full bg-accent dark:bg-accent-dark rounded-full transition-all duration-300"
+					class="h-full bg-text-primary dark:bg-text-primary-dark rounded-full transition-all duration-300"
 					style:width="{progress}%"
 				></div>
 			</div>
@@ -185,25 +215,38 @@
 	<!-- Content - fills remaining space, centered -->
 	<main class="flex-1 min-h-0 flex items-center justify-center p-6 overflow-y-auto">
 		<div class="w-full max-w-lg">
-			{@render children({ currentStep, canAdvance, advance, unblock })}
+			{@render children({ currentStep, canAdvance, advance, goBack, unblock })}
 		</div>
 	</main>
 
 	<!-- Bottom action bar -->
 	<footer class="flex-none px-4 py-4 border-t border-border-subtle dark:border-border-subtle-dark">
-		<div class="max-w-lg mx-auto flex justify-end">
+		<div class="max-w-lg mx-auto flex items-center justify-between">
+			<!-- Back button -->
 			<button
-				class="px-5 py-2.5 rounded-lg font-sans text-sm font-medium transition-all {canAdvance
-					? 'bg-accent dark:bg-accent-dark text-white hover:opacity-90'
-					: 'bg-surface dark:bg-surface-dark text-text-muted dark:text-text-muted-dark cursor-not-allowed'}"
-				disabled={!canAdvance}
-				onclick={advance}
+				class="flex items-center gap-2 px-3 py-2 rounded-lg font-sans text-sm transition-colors {currentStep > 0
+					? 'text-text-secondary dark:text-text-secondary-dark hover:text-text-primary dark:hover:text-text-primary-dark hover:bg-surface dark:hover:bg-surface-dark'
+					: 'text-text-muted/30 dark:text-text-muted-dark/30 cursor-not-allowed'}"
+				disabled={currentStep === 0}
+				onclick={goBack}
 			>
-				{isLastStep ? 'Complete' : 'Continue'}
-				{#if canAdvance}
-					<span class="ml-1.5 opacity-60 text-xs">↵</span>
-				{/if}
+				<Kbd key="←" size="sm" />
+				<span class="hidden sm:inline">Back</span>
 			</button>
+
+			<!-- Continue button -->
+			<div class="flex items-center gap-3">
+				<button
+					class="px-5 py-2.5 rounded-lg font-sans text-sm font-medium transition-all {canAdvance
+						? 'bg-text-primary dark:bg-text-primary-dark text-surface-elevated dark:text-surface-dark hover:bg-text-secondary dark:hover:bg-text-secondary-dark'
+						: 'bg-border-subtle dark:bg-border-subtle-dark text-text-muted dark:text-text-muted-dark cursor-not-allowed'}"
+					disabled={!canAdvance}
+					onclick={isLastStep ? complete : advance}
+				>
+					{isLastStep ? 'Complete' : 'Continue'}
+				</button>
+				<Kbd key="→" size="sm" />
+			</div>
 		</div>
 	</footer>
 </div>

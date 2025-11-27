@@ -31,7 +31,7 @@
 	/>
 	<!-- Progress circle -->
 	<circle
-		class="text-accent dark:text-accent-dark transition-all duration-500"
+		class="text-text-primary dark:text-text-primary-dark transition-all duration-500"
 		cx={size / 2}
 		cy={size / 2}
 		fill="none"

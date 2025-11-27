@@ -57,7 +57,7 @@
 								? 'border-red-500 bg-red-500/10'
 								: 'border-border-subtle dark:border-border-subtle-dark opacity-50'
 						: isSelected
-							? 'border-accent dark:border-accent-dark bg-accent/5'
+							? 'border-text-primary dark:border-text-primary-dark bg-text-primary/5 dark:bg-text-primary-dark/5'
 							: 'border-border-subtle dark:border-border-subtle-dark hover:border-border dark:hover:border-border-dark'
 				}"
 				disabled={submitted}
@@ -72,7 +72,7 @@
 									? 'border-red-500 bg-red-500 text-white'
 									: 'border-border dark:border-border-dark'
 							: isSelected
-								? 'border-accent dark:border-accent-dark bg-accent dark:bg-accent-dark'
+								? 'border-text-primary dark:border-text-primary-dark bg-text-primary dark:bg-text-primary-dark'
 								: 'border-border dark:border-border-dark'
 					}">
 						{#if submitted && isThisCorrect}
@@ -95,7 +95,7 @@
 	<div class="mt-6">
 		{#if !submitted}
 			<button
-				class="px-6 py-2 text-sm font-sans bg-accent dark:bg-accent-dark text-white rounded-lg hover:opacity-90 disabled:opacity-50 transition-opacity"
+				class="px-6 py-2 text-sm font-sans bg-text-primary dark:bg-text-primary-dark text-surface-elevated dark:text-surface-dark rounded-lg hover:bg-text-secondary dark:hover:bg-text-secondary-dark disabled:opacity-50 transition-colors"
 				disabled={!selectedId}
 				onclick={submit}
 			>
@@ -116,7 +116,7 @@
 					{explanation}
 				</div>
 				<button
-					class="text-sm font-sans text-accent dark:text-accent-dark hover:underline"
+					class="text-sm font-sans text-text-secondary dark:text-text-secondary-dark hover:text-text-primary dark:hover:text-text-primary-dark hover:underline transition-colors"
 					onclick={reset}
 				>
 					Try again

@@ -71,7 +71,7 @@
 					class="group inline-flex items-center gap-3 mt-12"
 					href={continueHref}
 				>
-					<span class="text-accent dark:text-accent-dark font-sans text-sm tracking-wide uppercase hover:underline underline-offset-4">
+					<span class="text-text-primary dark:text-text-primary-dark font-sans text-sm tracking-wide uppercase hover:underline underline-offset-4">
 						Continue
 					</span>
 					<Kbd key="R" size="sm" />

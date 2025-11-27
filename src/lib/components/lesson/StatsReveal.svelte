@@ -24,7 +24,7 @@
 <div class="space-y-6">
 	<div class="grid grid-cols-2 gap-4">
 		<!-- Without history -->
-		<div class="p-6 rounded-xl border-2 {withoutHistory ? 'border-accent/50 bg-accent/5' : 'border-border-subtle dark:border-border-subtle-dark'}">
+		<div class="p-6 rounded-xl border-2 {withoutHistory ? 'border-text-primary/30 dark:border-text-primary-dark/30 bg-surface dark:bg-surface-dark' : 'border-border-subtle dark:border-border-subtle-dark'}">
 			<div class="text-xs font-sans text-text-muted dark:text-text-muted-dark uppercase tracking-wider mb-2">
 				Without History
 			</div>
@@ -42,7 +42,7 @@
 		</div>
 
 		<!-- With history -->
-		<div class="p-6 rounded-xl border-2 {withHistory ? 'border-accent/50 bg-accent/5' : 'border-border-subtle dark:border-border-subtle-dark'}">
+		<div class="p-6 rounded-xl border-2 {withHistory ? 'border-text-primary/30 dark:border-text-primary-dark/30 bg-surface dark:bg-surface-dark' : 'border-border-subtle dark:border-border-subtle-dark'}">
 			<div class="text-xs font-sans text-text-muted dark:text-text-muted-dark uppercase tracking-wider mb-2">
 				With History
 			</div>
@@ -63,7 +63,7 @@
 	{#if bothComplete}
 		<div class="text-center p-6 rounded-xl bg-surface dark:bg-surface-dark">
 			{#if difference !== null && difference <= 15}
-				<div class="flex justify-center text-accent dark:text-accent-dark mb-2">
+				<div class="flex justify-center text-text-primary dark:text-text-primary-dark mb-2">
 					<IconSparkles class="w-8 h-8" />
 				</div>
 				<p class="text-xl font-serif text-text-primary dark:text-text-primary-dark">

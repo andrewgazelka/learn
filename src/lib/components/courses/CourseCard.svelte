@@ -22,21 +22,34 @@
 	href={resolve(`/courses/${course.slug}`)}
 >
 	<div class="flex items-start gap-4">
-		<!-- Progress ring or placeholder -->
-		<div class="shrink-0">
+		<!-- Course illustration with progress ring -->
+		<div class="shrink-0 relative w-12 h-12">
 			{#if progress}
 				<ProgressRing progress={progressPercent} size={48} />
 			{:else}
-				<div
-					class="w-12 h-12 rounded-full border-2 border-border-subtle dark:border-border-subtle-dark"
-				></div>
+				<svg class="w-12 h-12" viewBox="0 0 48 48">
+					<circle
+						class="text-border-subtle dark:text-border-subtle-dark"
+						cx="24"
+						cy="24"
+						fill="none"
+						r="22.5"
+						stroke="currentColor"
+						stroke-width="3"
+					/>
+				</svg>
+			{/if}
+			{#if course.illustration}
+				<div class="absolute inset-0 flex items-center justify-center">
+					<course.illustration class="w-7 h-7" />
+				</div>
 			{/if}
 		</div>
 
 		<!-- Content -->
 		<div class="flex-1 min-w-0">
 			<h3
-				class="font-serif text-lg text-text-primary dark:text-text-primary-dark group-hover:text-accent dark:group-hover:text-accent-dark transition-colors"
+				class="font-serif text-lg text-text-primary dark:text-text-primary-dark group-hover:underline underline-offset-4 transition-all"
 			>
 				{course.title}
 			</h3>

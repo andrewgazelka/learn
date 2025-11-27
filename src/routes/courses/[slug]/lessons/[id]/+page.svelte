@@ -96,7 +96,7 @@
 					Content coming soon
 				</p>
 				<a
-					class="inline-block mt-8 text-accent dark:text-accent-dark hover:underline"
+					class="inline-block mt-8 text-text-primary dark:text-text-primary-dark hover:underline"
 					href="/courses/{course.slug}"
 				>
 					← Back to course
@@ -110,7 +110,7 @@
 			<h1 class="text-2xl font-serif text-text-primary dark:text-text-primary-dark">
 				Lesson not found
 			</h1>
-			<a class="mt-4 inline-block text-accent dark:text-accent-dark hover:underline" href="/courses">
+			<a class="mt-4 inline-block text-text-primary dark:text-text-primary-dark hover:underline" href="/courses">
 				Browse all courses
 			</a>
 		</div>

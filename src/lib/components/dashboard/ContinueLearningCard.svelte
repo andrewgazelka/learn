@@ -55,7 +55,7 @@
 			<!-- CTA -->
 			<div class="flex items-center gap-3">
 				<span
-					class="text-accent dark:text-accent-dark font-sans font-medium group-hover:underline underline-offset-4"
+					class="text-text-primary dark:text-text-primary-dark font-sans font-medium group-hover:underline underline-offset-4"
 				>
 					Continue
 				</span>

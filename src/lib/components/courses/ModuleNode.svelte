@@ -3,6 +3,13 @@
 	import type { Module, ModuleStatus } from '$lib/types/courses';
 	import ProgressRing from './ProgressRing.svelte';
 	import LockClosed from '~icons/lucide/lock';
+	import IconBookOpen from '~icons/lucide/book-open';
+	// Sensemaking course icons
+	import IconNewspaper from '~icons/lucide/newspaper';
+	import IconSplit from '~icons/lucide/split';
+	import IconSwords from '~icons/lucide/swords';
+	import IconSparkles from '~icons/lucide/sparkles';
+	import IconMapPin from '~icons/lucide/map-pin';
 
 	interface Props {
 		module: Module;
@@ -17,6 +24,17 @@
 	const isLocked = status === 'locked';
 	const isCompleted = status === 'completed';
 	const firstLessonId = module.lessons[0]?.id;
+
+	const iconMap: Record<string, typeof IconBookOpen> = {
+		'newspaper': IconNewspaper,
+		'split': IconSplit,
+		'swords': IconSwords,
+		'sparkles': IconSparkles,
+		'map-pin': IconMapPin,
+		'book-open': IconBookOpen
+	};
+
+	const ModuleIcon = $derived(module.icon ? iconMap[module.icon] : IconBookOpen);
 </script>
 
 <div class="relative flex items-start gap-6">
@@ -24,7 +42,7 @@
 	{#if !isLast}
 		<div
 			class="absolute left-6 top-14 w-px h-[calc(100%-3rem)] {isCompleted
-				? 'bg-accent dark:bg-accent-dark'
+				? 'bg-text-primary dark:bg-text-primary-dark'
 				: 'bg-border-subtle dark:bg-border-subtle-dark'}"
 		></div>
 	{/if}
@@ -39,15 +57,17 @@
 			</div>
 		{:else if isCompleted}
 			<div
-				class="w-12 h-12 rounded-full bg-accent dark:bg-accent-dark flex items-center justify-center"
+				class="w-12 h-12 rounded-full bg-text-primary dark:bg-text-primary-dark flex items-center justify-center"
 			>
-				<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-					></path>
-				</svg>
+				<svelte:component this={ModuleIcon} class="w-5 h-5 text-white" />
 			</div>
 		{:else}
-			<ProgressRing {progress} size={48} strokeWidth={3} />
+			<div class="relative">
+				<ProgressRing {progress} size={48} strokeWidth={3} />
+				<div class="absolute inset-0 flex items-center justify-center">
+					<svelte:component this={ModuleIcon} class="w-5 h-5 text-text-secondary dark:text-text-secondary-dark" />
+				</div>
+			</div>
 		{/if}
 	</div>
 
@@ -67,7 +87,7 @@
 			href={resolve(`/courses/${courseSlug}/lessons/${firstLessonId}`)}
 		>
 			<h3
-				class="font-serif text-lg text-text-primary dark:text-text-primary-dark group-hover:text-accent dark:group-hover:text-accent-dark transition-colors"
+				class="font-serif text-lg text-text-primary dark:text-text-primary-dark group-hover:underline underline-offset-4 transition-colors"
 			>
 				{module.title}
 			</h3>

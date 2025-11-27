@@ -57,7 +57,7 @@
 			Course not found
 		</h1>
 		<a
-			class="mt-4 inline-block text-accent dark:text-accent-dark hover:underline"
+			class="mt-4 inline-block text-text-primary dark:text-text-primary-dark hover:underline"
 			href={resolve('/courses')}
 		>
 			Browse all courses

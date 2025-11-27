@@ -1,7 +1,21 @@
 import type { Course, CourseProgress } from '$lib/types/courses';
 import { reinforcementLearningCourse } from './reinforcement-learning';
+import { mediaLiteracyCourse } from './media-literacy';
+import { fashionCourse } from './fashion';
+import { photographyCourse } from './photography';
+import { healthCourse } from './health';
+import { rhetoricCourse } from './rhetoric';
+import { characterCourse } from './character';
 
-export const courses: Course[] = [reinforcementLearningCourse];
+export const courses: Course[] = [
+	reinforcementLearningCourse,
+	mediaLiteracyCourse,
+	fashionCourse,
+	photographyCourse,
+	healthCourse,
+	rhetoricCourse,
+	characterCourse
+];
 
 export function getCourseBySlug(slug: string): Course | undefined {
 	return courses.find((c) => c.slug === slug);

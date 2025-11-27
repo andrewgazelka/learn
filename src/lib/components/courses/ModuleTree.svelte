@@ -10,8 +10,10 @@
 	const { course, progress }: Props = $props();
 
 	function getModuleStatus(moduleId: string, moduleIndex: number): ModuleStatus {
+		// TODO: Re-implement proper locking based on prerequisites and progress
+		// For now, all modules are available for development/testing
 		if (progress === undefined) {
-			return moduleIndex === 0 ? 'available' : 'locked';
+			return 'available';
 		}
 
 		// Find completed modules
@@ -23,10 +25,9 @@
 			return 'completed';
 		} else if (moduleIndex === currentModuleIndex) {
 			return 'in_progress';
-		} else if (moduleIndex === currentModuleIndex + 1) {
-			return 'available';
 		}
-		return 'locked';
+		// All other modules are available (not locked)
+		return 'available';
 	}
 
 	function getModuleProgress(moduleId: string): number {

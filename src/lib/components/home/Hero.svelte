@@ -2,7 +2,18 @@
 	import { onMount } from 'svelte';
 	import { resolve } from '$app/paths';
 
-	const topics = ['Anything', 'Rust', 'Design', 'Music', 'Math', 'History'];
+	// Mix of philosophical and technical topics
+	const topics = [
+		'Epistemology',
+		'Game Theory',
+		'Rationality',
+		'Probability',
+		'Persuasion',
+		'Incentives',
+		'Causality',
+		'Statistics',
+		'Optimization'
+	];
 	let topicIndex = $state(0);
 	let mounted = $state(false);
 	let transitioning = $state(false);
@@ -20,56 +31,80 @@
 				}, 150);
 			}, 2500);
 
-			return () => { clearInterval(interval); };
+			return () => {
+				clearInterval(interval);
+			};
 		}, 600);
 
-		return () => { clearTimeout(startDelay); };
+		return () => {
+			clearTimeout(startDelay);
+		};
 	});
 
 	const currentTopic = $derived(topics[topicIndex]);
 </script>
 
-<section class="min-h-[80vh] flex flex-col justify-center px-8 md:px-16 lg:px-24">
-	<div class="max-w-2xl">
+<section class="min-h-[85vh] flex flex-col justify-center px-8 md:px-16 lg:px-24">
+	<div class="max-w-3xl">
 		<h1
-			class="text-5xl md:text-6xl lg:text-7xl font-serif font-medium leading-[1.1] tracking-tight text-text-primary dark:text-text-primary-dark"
+			class="text-4xl md:text-5xl lg:text-6xl font-serif font-medium leading-[1.15] tracking-tight text-text-primary dark:text-text-primary-dark"
 		>
 			<span style:--delay="0" class="inline-block animate-word" class:visible={mounted}>
-				Learn
-			</span>
-			<span
-				style:--delay="1"
-				class="inline-block animate-word"
-				class:visible={mounted}
-			>
-				<span
-					class="inline-block topic-text border-b-2 border-accent/30 dark:border-accent-dark/30"
-					class:transitioning
-				>
-					{currentTopic}
-				</span>
+				Own your thinking.
 			</span>
 		</h1>
 		<p
-			style:--delay="2"
-			class="mt-6 text-xl md:text-2xl text-text-secondary dark:text-text-secondary-dark font-serif leading-relaxed animate-word"
+			style:--delay="1"
+			class="mt-8 text-lg md:text-xl text-text-secondary dark:text-text-secondary-dark font-serif leading-relaxed animate-word max-w-2xl"
 			class:visible={mounted}
 		>
-			A thoughtful approach to knowledge, one concept at a time.
-		</p>
-		<div style:--delay="3" class="mt-12 animate-word" class:visible={mounted}>
-			<a
-				class="inline-block text-lg text-text-primary dark:text-text-primary-dark border-b-2 border-text-primary dark:border-text-primary-dark pb-1 hover:text-accent hover:border-accent dark:hover:text-accent-dark dark:hover:border-accent-dark transition-colors"
-				href={resolve('/dashboard')}
+			Bite-sized lessons on
+			<span
+				class="inline-block topic-text font-medium text-text-primary dark:text-text-primary-dark"
+				class:transitioning
 			>
-				Begin learning
+				{currentTopic}</span
+			>. Rigorous enough to change how you think. Short enough for the train.
+		</p>
+
+		<div
+			style:--delay="2"
+			class="mt-12 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 animate-word"
+			class:visible={mounted}
+		>
+			<a
+				class="inline-block text-lg text-text-primary dark:text-text-primary-dark border-b-2 border-text-primary dark:border-text-primary-dark pb-1 hover:text-text-secondary hover:border-text-secondary dark:hover:text-text-secondary-dark dark:hover:border-text-secondary-dark transition-colors"
+				href={resolve('/courses')}
+			>
+				Explore courses
 			</a>
-			<span class="ml-4 text-sm text-text-muted dark:text-text-muted-dark font-sans">
-				or press <kbd
+			<span class="text-sm text-text-muted dark:text-text-muted-dark font-sans">
+				Press <kbd
 					class="px-1.5 py-0.5 text-xs rounded border border-border dark:border-border-dark bg-surface-elevated dark:bg-surface-elevated-dark"
-					>D</kbd
-				>
+					>C</kbd
+				> for courses
 			</span>
+		</div>
+
+		<div
+			style:--delay="3"
+			class="mt-16 pt-8 border-t border-border/50 dark:border-border-dark/50 animate-word"
+			class:visible={mounted}
+		>
+			<p
+				class="text-xs uppercase tracking-widest text-text-muted dark:text-text-muted-dark font-sans mb-4"
+			>
+				Featured topics
+			</p>
+			<div class="flex flex-wrap gap-3">
+				{#each ['Epistemology', 'Game Theory', 'Political Economy', 'Decision Theory', 'Rhetoric'] as topic}
+					<span
+						class="px-3 py-1.5 text-sm font-sans text-text-secondary dark:text-text-secondary-dark border border-border dark:border-border-dark rounded-full hover:border-text-primary dark:hover:border-text-primary-dark transition-colors cursor-default"
+					>
+						{topic}
+					</span>
+				{/each}
+			</div>
 		</div>
 	</div>
 </section>
@@ -91,6 +126,8 @@
 
 	.topic-text {
 		transition: opacity 150ms ease;
+		min-width: 8ch;
+		display: inline-block;
 	}
 
 	.topic-text.transitioning {

@@ -24,7 +24,7 @@
 
 <div class="space-y-6">
 	<div class="p-6 rounded-xl bg-surface dark:bg-surface-dark border border-border-subtle dark:border-border-subtle-dark">
-		<div class="text-xs font-sans text-accent dark:text-accent-dark uppercase tracking-wider mb-3">
+		<div class="text-xs font-sans text-text-muted dark:text-text-muted-dark uppercase tracking-wider mb-3">
 			Think first
 		</div>
 		<p class="text-xl font-serif text-text-primary dark:text-text-primary-dark">
@@ -42,14 +42,14 @@
 		</button>
 	{:else if !revealed}
 		<button
-			class="w-full py-3 rounded-lg bg-accent dark:bg-accent-dark text-white font-sans font-medium hover:opacity-90 transition-opacity"
+			class="w-full py-3 rounded-lg bg-text-primary dark:bg-text-primary-dark text-surface-elevated dark:text-surface-dark font-sans font-medium hover:bg-text-secondary dark:hover:bg-text-secondary-dark transition-colors"
 			onclick={reveal}
 			type="button"
 		>
 			Show me the answer
 		</button>
 	{:else}
-		<div class="animate-in fade-in slide-in-from-bottom-2 duration-300 p-6 rounded-xl bg-accent/5 border border-accent/20">
+		<div class="animate-in fade-in slide-in-from-bottom-2 duration-300 p-6 rounded-xl bg-surface dark:bg-surface-dark border border-border dark:border-border-dark">
 			{@render children()}
 		</div>
 	{/if}

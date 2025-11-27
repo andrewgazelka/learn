@@ -80,6 +80,10 @@
 			if (keybindState.searchOpen || keybindState.helpOpen) return;
 			if (isComplete || showResult) return;
 
+			// Ignore if any modifier keys are pressed (Cmd, Ctrl, Alt)
+			// This prevents conflicts with system shortcuts like Cmd+S, Cmd+R
+			if (e.metaKey || e.ctrlKey || e.altKey) return;
+
 			// Number keys instantly predict
 			if (e.key === '1' || e.key === 's' || e.key === 'S' || e.key === 'ArrowLeft') {
 				e.preventDefault();
@@ -106,7 +110,7 @@
 				{#if i > 0}
 					<span class="text-text-muted dark:text-text-muted-dark">→</span>
 				{/if}
-				<span class="text-4xl {weather === 'sunny' ? 'text-amber-400' : 'text-blue-400'}" title={weather}>
+				<span class="text-text-primary dark:text-text-primary-dark" title={weather}>
 					{#if weather === 'sunny'}
 						<IconSun class="w-10 h-10" />
 					{:else}
@@ -124,7 +128,7 @@
 			<div class="text-text-muted dark:text-text-muted-dark">Correct</div>
 		</div>
 		<div class="text-center">
-			<div class="text-2xl font-bold text-accent dark:text-accent-dark">{streak}</div>
+			<div class="text-2xl font-bold text-text-primary dark:text-text-primary-dark">{streak}</div>
 			<div class="text-text-muted dark:text-text-muted-dark">Streak</div>
 		</div>
 	</div>
@@ -138,25 +142,25 @@
 				</p>
 				<div class="flex justify-center gap-4">
 					<button
-						class="flex flex-col items-center gap-2 p-6 rounded-xl border-2 border-border-subtle dark:border-border-subtle-dark hover:border-amber-400 hover:bg-amber-400/10 focus:border-amber-400 focus:bg-amber-400/10 focus:outline-none transition-all"
+						class="flex flex-col items-center gap-2 p-6 rounded-xl border-2 border-border-subtle dark:border-border-subtle-dark hover:border-border dark:hover:border-border-dark hover:bg-surface dark:hover:bg-surface-dark focus:border-text-primary dark:focus:border-text-primary-dark focus:outline-none transition-all"
 						onclick={() => predict('sunny')}
 					>
-						<span class="text-amber-400">
+						<span class="text-text-primary dark:text-text-primary-dark">
 							<IconSun class="w-12 h-12" />
 						</span>
 						<span class="font-sans text-sm text-text-secondary dark:text-text-secondary-dark">
-							Sunny <kbd class="ml-1 px-1.5 py-0.5 text-xs bg-surface dark:bg-surface-dark rounded">1</kbd>
+							Sunny <kbd class="ml-1 px-1.5 py-0.5 text-xs bg-surface-elevated dark:bg-surface-elevated-dark border border-border-subtle dark:border-border-subtle-dark rounded">1</kbd>
 						</span>
 					</button>
 					<button
-						class="flex flex-col items-center gap-2 p-6 rounded-xl border-2 border-border-subtle dark:border-border-subtle-dark hover:border-blue-400 hover:bg-blue-400/10 focus:border-blue-400 focus:bg-blue-400/10 focus:outline-none transition-all"
+						class="flex flex-col items-center gap-2 p-6 rounded-xl border-2 border-border-subtle dark:border-border-subtle-dark hover:border-border dark:hover:border-border-dark hover:bg-surface dark:hover:bg-surface-dark focus:border-text-primary dark:focus:border-text-primary-dark focus:outline-none transition-all"
 						onclick={() => predict('rainy')}
 					>
-						<span class="text-blue-400">
+						<span class="text-text-secondary dark:text-text-secondary-dark">
 							<IconCloudRain class="w-12 h-12" />
 						</span>
 						<span class="font-sans text-sm text-text-secondary dark:text-text-secondary-dark">
-							Rainy <kbd class="ml-1 px-1.5 py-0.5 text-xs bg-surface dark:bg-surface-dark rounded">2</kbd>
+							Rainy <kbd class="ml-1 px-1.5 py-0.5 text-xs bg-surface-elevated dark:bg-surface-elevated-dark border border-border-subtle dark:border-border-subtle-dark rounded">2</kbd>
 						</span>
 					</button>
 				</div>
@@ -167,7 +171,7 @@
 				<div class="flex items-center justify-center gap-4">
 					<div class="text-center">
 						<div class="text-xs text-text-muted dark:text-text-muted-dark mb-1">You said</div>
-						<span class="{userPrediction === 'sunny' ? 'text-amber-400' : 'text-blue-400'}">
+						<span class="text-text-primary dark:text-text-primary-dark">
 							{#if userPrediction === 'sunny'}
 								<IconSun class="w-10 h-10" />
 							{:else}
@@ -175,7 +179,7 @@
 							{/if}
 						</span>
 					</div>
-					<div class="text-3xl {userPrediction === actualNext ? 'text-green-500' : 'text-red-400'}">
+					<div class="{userPrediction === actualNext ? 'text-text-primary dark:text-text-primary-dark' : 'text-text-muted dark:text-text-muted-dark'}">
 						{#if userPrediction === actualNext}
 							<IconCheck class="w-8 h-8" />
 						{:else}
@@ -184,7 +188,7 @@
 					</div>
 					<div class="text-center">
 						<div class="text-xs text-text-muted dark:text-text-muted-dark mb-1">Actual</div>
-						<span class="{actualNext === 'sunny' ? 'text-amber-400' : 'text-blue-400'}">
+						<span class="text-text-secondary dark:text-text-secondary-dark">
 							{#if actualNext === 'sunny'}
 								<IconSun class="w-10 h-10" />
 							{:else}
@@ -194,10 +198,10 @@
 					</div>
 				</div>
 
-				<div class="text-lg font-sans {userPrediction === actualNext ? 'text-green-500' : 'text-red-400'}">
-					{userPrediction === actualNext ? 'Correct!' : 'Wrong!'}
+				<div class="text-lg font-sans {userPrediction === actualNext ? 'text-text-primary dark:text-text-primary-dark font-medium' : 'text-text-muted dark:text-text-muted-dark'}">
+					{userPrediction === actualNext ? 'Correct!' : 'Wrong'}
 					{#if userPrediction === actualNext && streak > 1}
-						<span class="text-accent dark:text-accent-dark ml-2 inline-flex items-center gap-1">
+						<span class="ml-2 inline-flex items-center gap-1">
 							<IconFlame class="w-5 h-5" /> {streak} streak!
 						</span>
 					{/if}
@@ -207,7 +211,7 @@
 	{:else}
 		<!-- Game complete -->
 		<div class="text-center space-y-4 p-6 rounded-xl bg-surface dark:bg-surface-dark">
-			<div class="text-accent dark:text-accent-dark flex justify-center">
+			<div class="text-text-primary dark:text-text-primary-dark flex justify-center">
 				<IconGamepad class="w-8 h-8" />
 			</div>
 			<p class="text-lg font-serif text-text-primary dark:text-text-primary-dark">
@@ -230,7 +234,7 @@
 		{#each Array(rounds) as _, i}
 			<div
 				class="w-2 h-2 rounded-full {i < currentRound
-					? 'bg-accent dark:bg-accent-dark'
+					? 'bg-text-primary dark:bg-text-primary-dark'
 					: i === currentRound
 						? 'bg-text-muted dark:bg-text-muted-dark'
 						: 'bg-border-subtle dark:bg-border-subtle-dark'}"

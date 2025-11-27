@@ -32,6 +32,21 @@ After completing the code, ask the user if they want a playground link. Only cal
 
 Use unplugin-icons: `import IconName from '~icons/{collection}/{icon}'` (e.g., `~icons/lucide/flame`). Browse at https://icones.js.org
 
+**Choose HIGHLY SPECIFIC icons** that directly represent the content:
+- Don't use generic icons like `book`, `star`, `check` when a more specific one exists
+- For modules/lessons, pick icons that visually convey the topic (e.g., `newspaper` for media, `swords` for conflict/game-theory, `split` for framing/perspectives)
+- Browse icones.js.org thoroughly - there are thousands of options
+- When adding new icons to components, import them and add to the icon map in `ModuleNode.svelte`
+
+## Course Illustrations
+
+Every course MUST have an `illustration` field with a custom SVG component. These are displayed in course cards and headers.
+
+- Create illustrations in `src/lib/components/illustrations/`
+- Use minimal, abstract SVG art (see existing examples)
+- Follow the design system colors: `stroke-text-primary`, `stroke-text-muted`, etc.
+- Accept a `class` prop for sizing
+
 ## Keyboard Navigation (Vim/Superhuman inspired)
 
 **THIS APP MUST BE 100% KEYBOARD NAVIGABLE.** Users should never need a mouse.

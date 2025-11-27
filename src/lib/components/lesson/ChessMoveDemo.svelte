@@ -102,14 +102,19 @@
 		return board;
 	}
 
+	// Use filled (black) Unicode symbols for all pieces - differentiate by color
 	function getPieceDisplay(piece: PieceType): string {
 		switch (piece) {
-			case 'K': return '♔';
-			case 'R': return '♖';
-			case 'P': return '♙';
-			case 'p': return '♟';
+			case 'K': return '♚'; // King (filled)
+			case 'R': return '♜'; // Rook (filled)
+			case 'P': return '♟'; // Pawn (filled) - white pawn
+			case 'p': return '♟'; // Pawn (filled) - black pawn
 			default: return '';
 		}
+	}
+
+	function isWhitePiece(piece: PieceType): boolean {
+		return piece === 'K' || piece === 'R' || piece === 'P';
 	}
 
 	function nextPhase() {
@@ -147,7 +152,7 @@
 	<div class="flex gap-2 justify-center">
 		<button
 			class="px-3 py-1.5 text-sm rounded-md transition-colors {currentDemo === 'castling'
-				? 'bg-accent dark:bg-accent-dark text-white'
+				? 'bg-text-primary dark:bg-text-primary-dark text-surface-elevated dark:text-surface-dark'
 				: 'bg-surface dark:bg-surface-dark text-text-secondary dark:text-text-secondary-dark hover:bg-border-subtle dark:hover:bg-border-subtle-dark'}"
 			onclick={() => switchDemo('castling')}
 		>
@@ -155,7 +160,7 @@
 		</button>
 		<button
 			class="px-3 py-1.5 text-sm rounded-md transition-colors {currentDemo === 'enpassant'
-				? 'bg-accent dark:bg-accent-dark text-white'
+				? 'bg-text-primary dark:bg-text-primary-dark text-surface-elevated dark:text-surface-dark'
 				: 'bg-surface dark:bg-surface-dark text-text-secondary dark:text-text-secondary-dark hover:bg-border-subtle dark:hover:bg-border-subtle-dark'}"
 			onclick={() => switchDemo('enpassant')}
 		>
@@ -179,7 +184,7 @@
 								{square.highlight === 'from' ? 'ring-2 ring-inset ring-amber-400 opacity-50' : ''}"
 						>
 							{#if square.piece}
-								<span class="drop-shadow-sm {square.piece === 'p' ? 'text-gray-800 dark:text-gray-300' : 'text-white'}" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5)">
+								<span class="drop-shadow-sm {isWhitePiece(square.piece) ? 'text-white' : 'text-gray-900 dark:text-gray-800'}" style="text-shadow: 0 1px 2px rgba(0,0,0,0.3)">
 									{getPieceDisplay(square.piece)}
 								</span>
 							{/if}
@@ -216,7 +221,7 @@
 			</button>
 		{:else}
 			<button
-				class="px-3 py-1.5 text-sm rounded bg-accent dark:bg-accent-dark text-white hover:opacity-90 transition-colors"
+				class="px-3 py-1.5 text-sm rounded bg-text-primary dark:bg-text-primary-dark text-surface-elevated dark:text-surface-dark hover:bg-text-secondary dark:hover:bg-text-secondary-dark transition-colors"
 				onclick={nextPhase}
 			>
 				Next →
